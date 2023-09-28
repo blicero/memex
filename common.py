@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-09-28 15:41:07 krylon>
+# Time-stamp: <2023-09-28 20:54:54 krylon>
 #
 # /data/code/python/memex/common.py
 # created on 28. 09. 2023
@@ -35,6 +35,8 @@ Common
 This module contains definitions commonly used throughout the application.
 """
 
+import logging
+import os
 import os.path
 
 from typing import Final
@@ -47,6 +49,20 @@ DB_PATH: Final[str] = os.path.join(BASE_DIR, "memex.db")
 
 # Path of the log file
 LOG_PATH: Final[str] = os.path.join(BASE_DIR, "memex.log")
+
+APP_NAME: Final[str] = "Memex"
+APP_VERSION: Final[str] = "0.0.1"
+DEBUG: Final[bool] = True
+
+
+def init_app():
+    """Initialize the application environment"""
+    if not os.path.isdir(BASE_DIR):
+        os.mkdir(BASE_DIR)
+
+def get_logger(name):
+    """Create and return a logger with the given name"""
+    pass
 
 # Local Variables: #
 # python-indent: 4 #
