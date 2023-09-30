@@ -1,5 +1,5 @@
 # -*- mode: org; fill-column: 78; -*-
-# Time-stamp: <2023-09-28 20:09:59 krylon>
+# Time-stamp: <2023-09-30 22:18:45 krylon>
 #
 #+TAGS: go(g) internals(i) ui(u) bug(b) feature(f)
 #+TAGS: database(d) design(e), meditation(m)
@@ -13,11 +13,26 @@ images, trying to extract any text from the images to use in the
 index.
 
 * Clock
+  #+BEGIN: clocktable :scope file :maxlevel 202 :emphasize t
+  #+CAPTION: Clock summary at [2023-09-30 Sa 22:18]
+  | Headline            | Time   |        |
+  |---------------------+--------+--------|
+  | *Total time*        | *4:03* |        |
+  |---------------------+--------+--------|
+  | *Components [0/0]*  | *4:03* |        |
+  | \_  /Scanner [0/0]/ |        | /4:03/ |
+  #+END:
 * Components [0/0]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :VISIBILITY: children
   :END:
+** Scanner [0/0]
+   :LOGBOOK:
+   CLOCK: [2023-09-30 Sa 18:15]--[2023-09-30 Sa 22:18] =>  4:03
+   :END:
+** Extractor [0/0]
+** Database [0/0]
 * Bugs [0/0]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
