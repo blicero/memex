@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-09-30 18:12:16 krylon>
+# Time-stamp: <2023-09-30 00:47:11 krylon>
 #
-# /data/code/python/memex/__init__.py
-# created on 28. 09. 2023
+# /data/code/python/memex/scanner.py
+# created on 29. 09. 2023
 # (c) 2023 Benjamin Walkenhorst
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,44 @@
 # SUCH DAMAGE.
 
 """
-__Init__
+Scanner
 
 (c) 2023 Benjamin Walkenhorst
 """
 
-__all__ = ["common", "scanner"]
+import logging
+import re
+import os
+import os.path
+
+from queue import Queue
+from typing import Final
+
+from memex import common
+
+_picPat: Final[re.Pattern] = \
+        re.compile("[.](?:jpe?g|png|webp|avif|gif)$", re.I)
+
+
+class Scanner:
+    """Scanner walks one or more directory trees, looking for image files"""
+
+    __slots__ = ['logger', 'queue']
+
+    logger: logging.Logger
+    queue: Queue
+
+    def __init__(self, q: Queue) -> None:
+        self.logger = common.get_logger("scanner")
+        self.queue = q
+
+        
+    def walk_dir(self, path: str) -> None:
+        """Walks a single directory tree"""
+        for folder, subfolders, files in os.walk(path):
+            for f in files:
+                if _picPat.search(f):
+                    self.queue.put(os.path.join(folder, f))
 
 # Local Variables: #
 # python-indent: 4 #
