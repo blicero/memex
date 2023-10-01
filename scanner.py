@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-09-30 00:47:11 krylon>
+# Time-stamp: <2023-10-01 01:07:41 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -59,7 +59,6 @@ class Scanner:
         self.logger = common.get_logger("scanner")
         self.queue = q
 
-        
     def walk_dir(self, path: str) -> None:
         """Walks a single directory tree"""
         for folder, subfolders, files in os.walk(path):

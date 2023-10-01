@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-09-30 22:17:51 krylon>
+# Time-stamp: <2023-10-01 01:22:51 krylon>
 #
 # /data/code/python/memex/test/test_scanner.py
 # created on 30. 09. 2023
@@ -38,8 +38,10 @@ import os.path
 import random
 import unittest
 
+from queue import Queue
 from typing import Final
 
+from memex import scanner
 
 suffices: Final[list[str]] = [
     'jpg',
@@ -60,10 +62,12 @@ suffices: Final[list[str]] = [
 
 FFLAGS: Final[int] = os.O_RDWR | os.O_CREAT
 
+fcnt: int = 0
+
 
 def generate_directory_tree(root: str, depth: int = 3, num: int = 100) -> None:
     """Generate  directory tree to test our scanner"""
-    if depth == 0:
+    if depth < 1:
         return
 
     try:
@@ -77,7 +81,8 @@ def generate_directory_tree(root: str, depth: int = 3, num: int = 100) -> None:
                 filename: Final[str] = f"testfile{f+1:03d}.{suffix}"
                 fullpath: Final[str] = os.path.join(folder, filename)
                 with os.open(fullpath, FFLAGS):
-                    pass
+                    nonlocal fcnt
+                    fcnt += 1
     except:  # noqa: E722
         os.system(f'rm -rf "{root}"')
 
@@ -85,7 +90,33 @@ def generate_directory_tree(root: str, depth: int = 3, num: int = 100) -> None:
 class ScannerTest(unittest.TestCase):
     """Test the directory scanner. Duh"""
 
-    pass
+    root: str = ""
+    queue: Queue
+
+    @classmethod
+    def setUpClass(cls):
+        cls.root = f'/tmp/{random.randint(0, 1<<32):08x}'
+        cls.queue = Queue()
+
+    @classmethod
+    def tearDownClass(cls):
+        # I would like to check if the tests ran successfully, and if so,
+        # delete the test folder.
+        pass
+
+    def test_create(self):
+        try:
+            self.scan = scanner.Scanner(self.__class__.queue)
+        except Exception as e:
+            self.fail(e)
+
+    def test_walk(self):
+        try:
+            self.scan.walk_dir(self.__class__.root)
+        except Exception as e:
+            self.fail(e)
+        else:
+            self.assertLessEqual(self.__class__.queue.qsize(), fcnt)
 
 # Local Variables: #
 # python-indent: 4 #
