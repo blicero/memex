@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-01 01:22:51 krylon>
+# Time-stamp: <2023-10-02 18:59:45 krylon>
 #
 # /data/code/python/memex/test/test_scanner.py
 # created on 30. 09. 2023
@@ -60,18 +60,24 @@ suffices: Final[list[str]] = [
     'el',
 ]
 
+TMP_FOLDER: Final[str] = '/data/ram'
 FFLAGS: Final[int] = os.O_RDWR | os.O_CREAT
 
+test_root: str = ""
 fcnt: int = 0
+fqueue: Queue = Queue()
+myScanner: scanner.Scanner = None
 
 
-def generate_directory_tree(root: str, depth: int = 3, num: int = 100) -> None:
+def generate_directory_tree(root: str, depth: int = 3, num: int = 10) -> None:
     """Generate  directory tree to test our scanner"""
     if depth < 1:
         return
 
+    fcnt = 0
+
     try:
-        os.mkdir(root)
+        os.makedirs(root)
         for i in range(num):
             folder = os.path.join(root, f"testfolder{i+1:02d}")
             os.mkdir(folder)
@@ -81,42 +87,41 @@ def generate_directory_tree(root: str, depth: int = 3, num: int = 100) -> None:
                 filename: Final[str] = f"testfile{f+1:03d}.{suffix}"
                 fullpath: Final[str] = os.path.join(folder, filename)
                 with os.open(fullpath, FFLAGS):
-                    nonlocal fcnt
                     fcnt += 1
     except:  # noqa: E722
         os.system(f'rm -rf "{root}"')
 
 
+def setUpModule():
+    folder: str = f'memex_test_scanner_{random.randint(0, 1<<32):08x}'
+    test_root = os.path.join(TMP_FOLDER, folder)
+    generate_directory_tree(test_root)
+
+
+def tearDownModule():
+    pass
+
+
 class ScannerTest(unittest.TestCase):
     """Test the directory scanner. Duh"""
 
-    root: str = ""
-    queue: Queue
-
     @classmethod
     def setUpClass(cls):
-        cls.root = f'/tmp/{random.randint(0, 1<<32):08x}'
-        cls.queue = Queue()
-
-    @classmethod
-    def tearDownClass(cls):
-        # I would like to check if the tests ran successfully, and if so,
-        # delete the test folder.
-        pass
+        cls.myScanner = None
 
     def test_create(self):
         try:
-            self.scan = scanner.Scanner(self.__class__.queue)
+            self.__class__.myScanner = scanner.Scanner(fqueue)
         except Exception as e:
             self.fail(e)
 
     def test_walk(self):
         try:
-            self.scan.walk_dir(self.__class__.root)
+            self.__class__.myScanner.walk_dir(test_root)
         except Exception as e:
             self.fail(e)
         else:
-            self.assertLessEqual(self.__class__.queue.qsize(), fcnt)
+            self.assertLessEqual(fqueue.qsize(), fcnt)
 
 # Local Variables: #
 # python-indent: 4 #
