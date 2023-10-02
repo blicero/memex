@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-09-29 10:05:23 krylon>
+# Time-stamp: <2023-10-02 19:09:50 krylon>
 #
 # /data/code/python/memex/common.py
 # created on 28. 09. 2023
@@ -69,6 +69,8 @@ def init_app():
 def get_logger(name: str, terminal: bool = True) -> logging.Logger:
     """Create and return a logger with the given name"""
     with _lock:
+        init_app()
+
         if name in _cache:
             return _cache[name]
 
