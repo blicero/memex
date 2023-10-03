@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-01 01:07:41 krylon>
+# Time-stamp: <2023-10-03 22:26:12 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -43,6 +43,8 @@ from typing import Final
 
 from memex import common
 
+# pylint: disable-msg=C0103
+
 _picPat: Final[re.Pattern] = \
         re.compile("[.](?:jpe?g|png|webp|avif|gif)$", re.I)
 
@@ -61,10 +63,13 @@ class Scanner:
 
     def walk_dir(self, path: str) -> None:
         """Walks a single directory tree"""
-        for folder, subfolders, files in os.walk(path):
+        for folder, _, files in os.walk(path):
             for f in files:
                 if _picPat.search(f):
                     self.queue.put(os.path.join(folder, f))
+
+    def scan(self):
+        pass
 
 # Local Variables: #
 # python-indent: 4 #

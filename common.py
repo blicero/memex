@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-02 19:09:50 krylon>
+# Time-stamp: <2023-10-03 18:54:58 krylon>
 #
 # /data/code/python/memex/common.py
 # created on 28. 09. 2023
@@ -56,8 +56,8 @@ APP_NAME: Final[str] = "Memex"
 APP_VERSION: Final[str] = "0.0.1"
 DEBUG: Final[bool] = True
 
-_lock: Final[Lock] = Lock()
-_cache: Final[dict] = {}
+_lock: Final[Lock] = Lock() # pylint: disable-msg=C0103
+_cache: Final[dict] = {} # pylint: disable-msg=C0103
 
 
 def init_app():

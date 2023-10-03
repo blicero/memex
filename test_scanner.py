@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-02 18:59:45 krylon>
+# Time-stamp: <2023-10-03 15:55:00 krylon>
 #
 # /data/code/python/memex/test/test_scanner.py
 # created on 30. 09. 2023
@@ -66,7 +66,7 @@ FFLAGS: Final[int] = os.O_RDWR | os.O_CREAT
 test_root: str = ""
 fcnt: int = 0
 fqueue: Queue = Queue()
-myScanner: scanner.Scanner = None
+myScanner: scanner.Scanner
 
 
 def generate_directory_tree(root: str, depth: int = 3, num: int = 10) -> None:
@@ -83,39 +83,41 @@ def generate_directory_tree(root: str, depth: int = 3, num: int = 10) -> None:
             os.mkdir(folder)
             generate_directory_tree(folder, depth - 1, num)
             for f in range(num*num):
-                suffix: Final[str] = random.choice(suffices)
-                filename: Final[str] = f"testfile{f+1:03d}.{suffix}"
-                fullpath: Final[str] = os.path.join(folder, filename)
-                with os.open(fullpath, FFLAGS):
+                suffix: str = random.choice(suffices)
+                filename: str = f"testfile{f+1:03d}.{suffix}"
+                fullpath: str = os.path.join(folder, filename)
+                with os.open(fullpath, os.O_RDWR | os.O_CREAT):  # type: ignore
                     fcnt += 1
     except:  # noqa: E722
         os.system(f'rm -rf "{root}"')
 
 
-def setUpModule():
+def setUpModule() -> None:
     folder: str = f'memex_test_scanner_{random.randint(0, 1<<32):08x}'
     test_root = os.path.join(TMP_FOLDER, folder)
     generate_directory_tree(test_root)
 
 
-def tearDownModule():
+def tearDownModule() -> None:
     pass
 
 
 class ScannerTest(unittest.TestCase):
     """Test the directory scanner. Duh"""
 
+    myScanner: scanner.Scanner
+
     @classmethod
     def setUpClass(cls):
         cls.myScanner = None
 
-    def test_create(self):
+    def test_create(self) -> None:
         try:
             self.__class__.myScanner = scanner.Scanner(fqueue)
         except Exception as e:
             self.fail(e)
 
-    def test_walk(self):
+    def test_walk(self) -> None:
         try:
             self.__class__.myScanner.walk_dir(test_root)
         except Exception as e:
