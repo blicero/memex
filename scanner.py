@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-03 22:26:12 krylon>
+# Time-stamp: <2023-10-04 18:26:42 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -39,7 +39,8 @@ import os
 import os.path
 
 from queue import Queue
-from typing import Final
+from threading import Thread
+from typing import Final, List
 
 from memex import common
 
@@ -68,8 +69,17 @@ class Scanner:
                 if _picPat.search(f):
                     self.queue.put(os.path.join(folder, f))
 
-    def scan(self):
-        pass
+    def scan(self, folders: List[str]) -> None:
+        """Walks a list of folders in parallel.
+        Returns when all folders have been processed."""
+        workers: List[Thread] = []
+        for f in folders:
+            w: Thread = Thread(target=self.walk_dir, args=(f, ))
+            w.start()
+            workers.append(w)
+
+        for w in workers:
+            w.join()
 
 # Local Variables: #
 # python-indent: 4 #
