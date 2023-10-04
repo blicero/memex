@@ -1,5 +1,5 @@
 # -*- mode: org; fill-column: 78; -*-
-# Time-stamp: <2023-09-30 22:18:45 krylon>
+# Time-stamp: <2023-10-05 00:37:04 krylon>
 #
 #+TAGS: go(g) internals(i) ui(u) bug(b) feature(f)
 #+TAGS: database(d) design(e), meditation(m)
@@ -14,13 +14,14 @@ index.
 
 * Clock
   #+BEGIN: clocktable :scope file :maxlevel 202 :emphasize t
-  #+CAPTION: Clock summary at [2023-09-30 Sa 22:18]
-  | Headline            | Time   |        |
-  |---------------------+--------+--------|
-  | *Total time*        | *4:03* |        |
-  |---------------------+--------+--------|
-  | *Components [0/0]*  | *4:03* |        |
-  | \_  /Scanner [0/0]/ |        | /4:03/ |
+  #+CAPTION: Clock summary at [2023-10-05 Do 00:36]
+  | Headline            | Time    |        |
+  |---------------------+---------+--------|
+  | *Total time*        | *10:20* |        |
+  |---------------------+---------+--------|
+  | *Components [0/0]*  | *10:20* |        |
+  | \_  /Scanner [0/0]/ |         | /6:03/ |
+  | \_  /Reader [0/0]/  |         | /4:17/ |
   #+END:
 * Components [0/0]
   :PROPERTIES:
@@ -29,9 +30,14 @@ index.
   :END:
 ** Scanner [0/0]
    :LOGBOOK:
+   CLOCK: [2023-10-04 Mi 17:53]--[2023-10-04 Mi 19:53] =>  2:00
    CLOCK: [2023-09-30 Sa 18:15]--[2023-09-30 Sa 22:18] =>  4:03
    :END:
-** Extractor [0/0]
+** Reader [0/0]
+   :LOGBOOK:
+   CLOCK: [2023-10-04 Mi 20:19]--[2023-10-05 Do 00:36] =>  4:17
+   :END:
+   Okay, the API offered by pytesseract is fortunately stupid easy.
 ** Database [0/0]
 * Bugs [0/0]
   :PROPERTIES:
