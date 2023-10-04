@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-04 18:26:42 krylon>
+# Time-stamp: <2023-10-04 19:58:45 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -28,9 +28,11 @@
 # SUCH DAMAGE.
 
 """
-Scanner
+memex.scanner
 
 (c) 2023 Benjamin Walkenhorst
+
+Scans directory trees for image files.
 """
 
 import logging
