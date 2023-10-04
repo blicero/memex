@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-03 15:55:00 krylon>
+# Time-stamp: <2023-10-04 18:41:25 krylon>
 #
 # /data/code/python/memex/test/test_scanner.py
 # created on 30. 09. 2023
@@ -39,11 +39,11 @@ import random
 import unittest
 
 from queue import Queue
-from typing import Final
+from typing import Final, List
 
 from memex import scanner
 
-suffices: Final[list[str]] = [
+SUFFICES: Final[List[str]] = [
     'jpg',
     'jpeg',
     'png',
@@ -61,69 +61,70 @@ suffices: Final[list[str]] = [
 ]
 
 TMP_FOLDER: Final[str] = '/data/ram'
-FFLAGS: Final[int] = os.O_RDWR | os.O_CREAT
 
-test_root: str = ""
-fcnt: int = 0
 fqueue: Queue = Queue()
 myScanner: scanner.Scanner
 
 
-def generate_directory_tree(root: str, depth: int = 3, num: int = 10) -> None:
-    """Generate  directory tree to test our scanner"""
+def generate_directory_tree(root: str, depth: int = 3, num: int = 10) -> int:
+    """Generate  directory tree to test our scanner.
+    Return the number of files created"""
     if depth < 1:
-        return
+        return 0
 
-    fcnt = 0
+    num_files: int = 0
 
     try:
-        os.makedirs(root)
+        os.makedirs(root, 0o777, True)
         for i in range(num):
             folder = os.path.join(root, f"testfolder{i+1:02d}")
-            os.mkdir(folder)
-            generate_directory_tree(folder, depth - 1, num)
-            for f in range(num*num):
-                suffix: str = random.choice(suffices)
-                filename: str = f"testfile{f+1:03d}.{suffix}"
+            os.mkdir(folder, 0o777)
+            num_files += generate_directory_tree(folder, depth - 1, num)
+            for file_idx in range(num*num):
+                suffix: str = random.choice(SUFFICES)
+                filename: str = f"testfile{file_idx+1:03d}.{suffix}"
                 fullpath: str = os.path.join(folder, filename)
-                with os.open(fullpath, os.O_RDWR | os.O_CREAT):  # type: ignore
-                    fcnt += 1
+                with open(fullpath, "w"):  # pylint: disable-msg=W1514
+                    num_files += 1
     except:  # noqa: E722
         os.system(f'rm -rf "{root}"')
+        raise
 
-
-def setUpModule() -> None:
-    folder: str = f'memex_test_scanner_{random.randint(0, 1<<32):08x}'
-    test_root = os.path.join(TMP_FOLDER, folder)
-    generate_directory_tree(test_root)
-
-
-def tearDownModule() -> None:
-    pass
+    return num_files
 
 
 class ScannerTest(unittest.TestCase):
     """Test the directory scanner. Duh"""
 
     myScanner: scanner.Scanner
+    fcnt: int
+    root: str
 
     @classmethod
-    def setUpClass(cls):
-        cls.myScanner = None
+    def setUpClass(cls) -> None:
+        folder: str = f'memex_test_scanner_{random.randint(0, 1<<32):08x}'
+        cls.root = os.path.join(TMP_FOLDER, folder)
+        cls.fcnt = generate_directory_tree(cls.root)
+
+    @classmethod
+    def tearDownClass(cls):
+        os.system(f'rm -rf "{cls.root}"')
 
     def test_create(self) -> None:
+        """Test creating a Scanner instance."""
         try:
             self.__class__.myScanner = scanner.Scanner(fqueue)
-        except Exception as e:
+        except Exception as e:  # pylint: disable-msg=W0718,C0103
             self.fail(e)
 
     def test_walk(self) -> None:
+        """Test walking a single directory tree."""
         try:
-            self.__class__.myScanner.walk_dir(test_root)
-        except Exception as e:
+            self.__class__.myScanner.walk_dir(self.__class__.root)
+        except Exception as e:  # pylint: disable-msg=W0718,C0103
             self.fail(e)
         else:
-            self.assertLessEqual(fqueue.qsize(), fcnt)
+            self.assertLessEqual(fqueue.qsize(), self.__class__.fcnt)
 
 # Local Variables: #
 # python-indent: 4 #
