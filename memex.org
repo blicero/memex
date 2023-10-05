@@ -1,5 +1,5 @@
 # -*- mode: org; fill-column: 78; -*-
-# Time-stamp: <2023-10-05 00:37:04 krylon>
+# Time-stamp: <2023-10-06 00:46:51 krylon>
 #
 #+TAGS: go(g) internals(i) ui(u) bug(b) feature(f)
 #+TAGS: database(d) design(e), meditation(m)
@@ -14,14 +14,15 @@ index.
 
 * Clock
   #+BEGIN: clocktable :scope file :maxlevel 202 :emphasize t
-  #+CAPTION: Clock summary at [2023-10-05 Do 00:36]
-  | Headline            | Time    |        |
-  |---------------------+---------+--------|
-  | *Total time*        | *10:20* |        |
-  |---------------------+---------+--------|
-  | *Components [0/0]*  | *10:20* |        |
-  | \_  /Scanner [0/0]/ |         | /6:03/ |
-  | \_  /Reader [0/0]/  |         | /4:17/ |
+  #+CAPTION: Clock summary at [2023-10-06 Fr 00:46]
+  | Headline             | Time    |        |
+  |----------------------+---------+--------|
+  | *Total time*         | *15:29* |        |
+  |----------------------+---------+--------|
+  | *Components [0/0]*   | *15:29* |        |
+  | \_  /Scanner [0/0]/  |         | /6:03/ |
+  | \_  /Reader [0/0]/   |         | /4:17/ |
+  | \_  /Database [0/0]/ |         | /5:09/ |
   #+END:
 * Components [0/0]
   :PROPERTIES:
@@ -39,6 +40,9 @@ index.
    :END:
    Okay, the API offered by pytesseract is fortunately stupid easy.
 ** Database [0/0]
+   :LOGBOOK:
+   CLOCK: [2023-10-05 Do 19:37]--[2023-10-06 Fr 00:46] =>  5:09
+   :END:
 * Bugs [0/0]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
