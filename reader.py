@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-05 00:36:29 krylon>
+# Time-stamp: <2023-10-05 15:04:48 krylon>
 #
 # /data/code/python/memex/reader.py
 # created on 04. 10. 2023
@@ -47,11 +47,6 @@ from PIL import Image  # type: ignore
 from memex import common
 
 
-def read_image(path: str) -> str:
-    """Extract text from an image file and return it as a string."""
-    return pytesseract.image_to_string(Image.open(path))
-
-
 # pylint: disable-msg=R0903
 class Reader:
     """Reader extracts text from image files,
@@ -62,7 +57,7 @@ class Reader:
     file_queue: Queue
 
     def __init__(self, queue: Queue, worker_cnt=os.cpu_count()) -> None:
-        self.logger = common.get_logger("reader")
+        self.log = common.get_logger("reader")
         self.file_queue = queue
         self.workers = []
 
@@ -75,9 +70,18 @@ class Reader:
         """Process image files as they arrive at the queue."""
         while True:
             path: str = self.file_queue.get()
-            content: str = read_image(path)
-            self.log.debug(f"""Worker{worker_id:02d} got text from {path}:
-            {content}""")
+            content: str = self.read_image(path)
+            self.log.debug("""Worker%02d got text from %s:
+            %s""", worker_id, path, content)
+
+    def read_image(self, path: str) -> str:
+        """Extract text from an image file and return it as a string."""
+        self.log.debug("Process image %s", path)
+        try:
+            return pytesseract.image_to_string(Image.open(path))
+        except Exception as ex:
+            self.log.error("Error processing %s: %s", path, ex)
+            raise
 
 # Local Variables: #
 # python-indent: 4 #
