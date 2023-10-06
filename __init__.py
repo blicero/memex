@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-09-30 18:12:16 krylon>
+# Time-stamp: <2023-10-06 00:48:59 krylon>
 #
 # /data/code/python/memex/__init__.py
 # created on 28. 09. 2023
@@ -28,12 +28,12 @@
 # SUCH DAMAGE.
 
 """
-__Init__
+memex.__init__
 
 (c) 2023 Benjamin Walkenhorst
 """
 
-__all__ = ["common", "scanner"]
+__all__ = ["common", "scanner", "reader", "image", "database"]
 
 # Local Variables: #
 # python-indent: 4 #
