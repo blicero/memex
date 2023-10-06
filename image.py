@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-06 00:45:31 krylon>
+# Time-stamp: <2023-10-06 13:44:29 krylon>
 #
 # /data/code/python/memex/image.py
 # created on 05. 10. 2023
@@ -33,6 +33,7 @@ memex.image
 (c) 2023 Benjamin Walkenhorst
 """
 
+from datetime import datetime
 from typing import NamedTuple
 
 
@@ -41,6 +42,7 @@ class Image(NamedTuple):  # pylint: disable-msg=R0903
     id: int
     path: str
     content: str
+    timestamp: datetime
 
 
 # Local Variables: #
