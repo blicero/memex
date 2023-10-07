@@ -36,12 +36,13 @@ memex.database
 import logging
 import sqlite3
 import threading
+from datetime import datetime
 from enum import Enum, auto
 from typing import Final, List
 
 import krylib
 
-from memex import common
+from memex import common, image
 
 INIT_QUERIES: Final[List[str]] = [
     """CREATE TABLE image (
@@ -54,7 +55,7 @@ INIT_QUERIES: Final[List[str]] = [
     "CREATE UNIQUE INDEX img_path_idx ON image (path)",
     "CREATE INDEX img_time_idx ON image (timestamp)",
     "CREATE INDEX img_content_idx ON image (content)",
-    "CREATE VIRTUAL TABLE img_index (path, content)",
+    "CREATE VIRTUAL TABLE img_index USING fts4(path, content)",
 
     """
 CREATE TRIGGER tr_fts_img_add
@@ -75,7 +76,9 @@ END;
     """
 CREATE TRIGGER tr_fts_img_up
 AFTER UPDATE ON image
-    UPDATE img_index SET content = new.content WHERE path = new.path;
+BEGIN
+    DELETE FROM img_index WHERE path = old.path;
+    INSERT INTO img_index (path, content) VALUES (new.path, new.content);
 END;
 """,
 ]
@@ -88,15 +91,27 @@ class Query(Enum):
     FILE_ADD = auto()
     FILE_UPDATE = auto()
     FILE_DELETE = auto()
+    FILE_SEARCH = auto()
 
 
 DB_QUERIES: Final[dict[Query, str]] = {
     Query.FILE_ADD:
-    "INSERT INTO image (path, content, timestamp) VALUES (?, ?, ?)",
+    "INSERT INTO image (path, content, timestamp) VALUES (?, ?, ?) RETURNING id",
     Query.FILE_DELETE:
     "DELETE FROM image WHERE id = ?",
     Query.FILE_UPDATE:
     "UPDATE image SET content = ?, timestamp = ? WHERE id = ?",
+    Query.FILE_SEARCH:
+    """
+SELECT
+    f.id,
+    f.path,
+    f.content,
+    f.timestamp
+FROM img_index i
+INNER JOIN image f ON i.path = f.path
+WHERE img_index MATCH ?
+    """,
 }
 
 
@@ -116,6 +131,10 @@ class Database:  # pylint: disable-msg=R0903
             exist: bool = krylib.fexist(path)
             self.db = sqlite3.connect(path)  # pylint: disable-msg=C0103
 
+            cur: sqlite3.Cursor = self.db.cursor()
+            cur.execute("PRAGMA foreign_keys = true")
+            cur.execute("PRAGMA journal_mode = WAL")
+
             if not exist:
                 self.__create_db()
 
@@ -125,6 +144,38 @@ class Database:  # pylint: disable-msg=R0903
             for query in INIT_QUERIES:
                 cur: sqlite3.Cursor = self.db.cursor()
                 cur.execute(query)
+
+    def __enter__(self):
+        self.db.__enter__()
+
+    def __exit__(self, ex_type, ex_val, traceback):
+        return self.db.__exit__(ex_type, ex_val, traceback)
+
+    # pylint: disable-msg=C0301
+    def file_add(self, path: str, content: str, timestamp: datetime = datetime.now()) -> image.Image:  # noqa
+        """Add the file to the database."""
+        self.log.debug("Add image %s", path)
+        with self.db:
+            cur: sqlite3.Cursor = self.db.cursor()
+            cur.execute(DB_QUERIES[Query.FILE_ADD],
+                        (path,
+                         content,
+                         timestamp.timestamp()))
+            row = cur.fetchone()
+            return image.Image(row[0], path, content, timestamp)
+
+    def file_search(self, query: str) -> list[image.Image]:
+        """Search for files matching the given query"""
+        self.log.debug("Searching for images matching '%s'", query)
+        results: list[image.Image] = []
+        cur: sqlite3.Cursor = self.db.cursor()
+        for row in cur.execute(DB_QUERIES[Query.FILE_SEARCH], query):
+            img = image.Image(row[0],
+                              row[1],
+                              row[2],
+                              datetime.fromtimestamp(row[3]))
+            results.append(img)
+        return results
 
 # Local Variables: #
 # python-indent: 4 #
