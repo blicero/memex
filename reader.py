@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-05 15:04:48 krylon>
+# Time-stamp: <2023-10-06 19:39:38 krylon>
 #
 # /data/code/python/memex/reader.py
 # created on 04. 10. 2023

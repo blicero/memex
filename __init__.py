@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-06 00:48:59 krylon>
+# Time-stamp: <2023-10-06 19:39:30 krylon>
 #
 # /data/code/python/memex/__init__.py
 # created on 28. 09. 2023

@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-03 18:54:58 krylon>
+# Time-stamp: <2023-10-07 17:48:20 krylon>
 #
 # /data/code/python/memex/common.py
 # created on 28. 09. 2023

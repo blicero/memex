@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-04 18:41:25 krylon>
+# Time-stamp: <2023-10-06 21:55:29 krylon>
 #
 # /data/code/python/memex/test/test_scanner.py
 # created on 30. 09. 2023
@@ -28,7 +28,7 @@
 # SUCH DAMAGE.
 
 """
-memex.test.test_scanner
+memex.test_scanner
 
 (c) 2023 Benjamin Walkenhorst
 """
