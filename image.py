@@ -39,7 +39,7 @@ from typing import NamedTuple
 
 class Image(NamedTuple):  # pylint: disable-msg=R0903
     """Represents one image file"""
-    id: int
+    dbid: int
     path: str
     content: str
     timestamp: datetime
