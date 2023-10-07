@@ -43,27 +43,60 @@ import os.path
 from threading import Lock
 from typing import Final
 
-# Base path for application-specific files
-BASE_DIR: Final[str] = os.path.expanduser("~/.memex.d")
+# # Base path for application-specific files
+# BASE_DIR: str = os.path.expanduser("~/.memex.d")
 
-# Path of the database
-DB_PATH: Final[str] = os.path.join(BASE_DIR, "memex.db")
+# # Path of the database
+# DB_PATH: str = os.path.join(BASE_DIR, "memex.db")
 
-# Path of the log file
-LOG_PATH: Final[str] = os.path.join(BASE_DIR, "memex.log")
+# # Path of the log file
+# LOG_PATH: str = os.path.join(BASE_DIR, "memex.log")
 
 APP_NAME: Final[str] = "Memex"
 APP_VERSION: Final[str] = "0.0.1"
 DEBUG: Final[bool] = True
 
-_lock: Final[Lock] = Lock() # pylint: disable-msg=C0103
-_cache: Final[dict] = {} # pylint: disable-msg=C0103
+
+class Path:
+    """Holds the paths of folders and files used by the application"""
+
+    __base: str
+
+    def __init__(self, root: str = os.path.expanduser(f"~/.{APP_NAME.lower()}.d")) -> None:  # noqa
+        self.__base = root
+
+    def base(self, folder: str = "") -> str:
+        """Return the base directory for application specific files.
+        If path is a non-empty string, set the base directory to its value."""
+        if folder != "":
+            self.__base = folder
+        return self.__base
+
+    def db(self) -> str:  # pylint: disable-msg=C0103
+        """Return the path to the database"""
+        return os.path.join(self.__base, f"{APP_NAME.lower()}.db")
+
+    def log(self) -> str:
+        """Return the path to the log file"""
+        return os.path.join(self.__base, f"{APP_NAME.lower()}.log")
+
+
+path: Path = Path(os.path.expanduser(f"~/.{APP_NAME}.d"))
+
+_lock: Final[Lock] = Lock()  # pylint: disable-msg=C0103
+_cache: Final[dict] = {}  # pylint: disable-msg=C0103
+
+
+def set_basedir(folder: str) -> None:
+    """Set the base dir to the speficied path."""
+    path.base(folder)
+    init_app()
 
 
 def init_app():
     """Initialize the application environment"""
-    if not os.path.isdir(BASE_DIR):
-        os.mkdir(BASE_DIR)
+    if not os.path.isdir(path.base()):
+        os.mkdir(path.base())
 
 
 def get_logger(name: str, terminal: bool = True) -> logging.Logger:
@@ -81,7 +114,7 @@ def get_logger(name: str, terminal: bool = True) -> logging.Logger:
 
         log_obj = logging.getLogger(name)
         log_obj.setLevel(logging.DEBUG)
-        log_file_handler = logging.handlers.RotatingFileHandler(LOG_PATH,
+        log_file_handler = logging.handlers.RotatingFileHandler(path.log(),
                                                                 'a',
                                                                 max_log_size,
                                                                 max_log_count)
