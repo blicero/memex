@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-07 18:32:31 krylon>
+# Time-stamp: <2023-10-07 22:50:06 krylon>
 #
 # /data/code/python/memex/test_database.py
 # created on 06. 10. 2023
@@ -82,6 +82,16 @@ class DatabaseTest(unittest.TestCase):
                 self.assertGreater(img.dbid, 0)
         except Exception as ex:  # pylint: disable-msg=W0718
             self.fail(f"Failed adding image: {ex}")
+
+    def test_03_image_search(self) -> None:
+        """Test searching for images"""
+        query: Final[str] = "doof"
+        db: database.Database = DatabaseTest.db()
+        try:
+            results = db.file_search(query)
+            self.assertGreater(len(results), 0)
+        except Exception as ex:
+            self.fail(f"Failed searching for image: {ex}")
 
 # Local Variables: #
 # python-indent: 4 #

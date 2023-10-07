@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-07 18:36:15 krylon>
+# Time-stamp: <2023-10-07 22:51:00 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -169,7 +169,7 @@ class Database:  # pylint: disable-msg=R0903
         self.log.debug("Searching for images matching '%s'", query)
         results: list[image.Image] = []
         cur: sqlite3.Cursor = self.db.cursor()
-        for row in cur.execute(DB_QUERIES[Query.FILE_SEARCH], query):
+        for row in cur.execute(DB_QUERIES[Query.FILE_SEARCH], (query, )):
             img = image.Image(row[0],
                               row[1],
                               row[2],
