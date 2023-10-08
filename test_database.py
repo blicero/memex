@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-07 22:50:06 krylon>
+# Time-stamp: <2023-10-08 21:57:18 krylon>
 #
 # /data/code/python/memex/test_database.py
 # created on 06. 10. 2023
@@ -63,11 +63,14 @@ class DatabaseTest(unittest.TestCase):
         """Set or return the database connection."""
         if db is not None:
             cls.conn = db
-        return cls.conn
+        if cls.conn is not None:
+            return cls.conn
+        raise ValueError("conn is None")
 
     def test_01_db_open(self) -> None:
         """Test opening the database."""
         db: database.Database = database.Database(common.path.db())
+        self.assertIsNotNone(db)
         DatabaseTest.db(db)
 
     def test_02_image_add(self) -> None:
@@ -90,7 +93,7 @@ class DatabaseTest(unittest.TestCase):
         try:
             results = db.file_search(query)
             self.assertGreater(len(results), 0)
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable-msg=W0718
             self.fail(f"Failed searching for image: {ex}")
 
 # Local Variables: #

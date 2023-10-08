@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-07 17:48:20 krylon>
+# Time-stamp: <2023-10-08 21:02:42 krylon>
 #
 # /data/code/python/memex/common.py
 # created on 28. 09. 2023
@@ -84,7 +84,7 @@ class Path:
 path: Path = Path(os.path.expanduser(f"~/.{APP_NAME}.d"))
 
 _lock: Final[Lock] = Lock()  # pylint: disable-msg=C0103
-_cache: Final[dict] = {}  # pylint: disable-msg=C0103
+_cache: Final[dict[str,logging.Logger]] = {}  # pylint: disable-msg=C0103
 
 
 def set_basedir(folder: str) -> None:
@@ -93,7 +93,7 @@ def set_basedir(folder: str) -> None:
     init_app()
 
 
-def init_app():
+def init_app() -> None:
     """Initialize the application environment"""
     if not os.path.isdir(path.base()):
         os.mkdir(path.base())

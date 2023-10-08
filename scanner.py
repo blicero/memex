@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-06 19:39:43 krylon>
+# Time-stamp: <2023-10-08 21:03:47 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -48,7 +48,7 @@ from memex import common
 
 # pylint: disable-msg=C0103
 
-_picPat: Final[re.Pattern] = \
+_picPat: Final[re.Pattern[str]] = \
         re.compile("[.](?:jpe?g|png|webp|avif|gif)$", re.I)
 
 
@@ -58,9 +58,9 @@ class Scanner:
     __slots__ = ['logger', 'queue']
 
     logger: logging.Logger
-    queue: Queue
+    queue: Queue[str]
 
-    def __init__(self, q: Queue) -> None:
+    def __init__(self, q: Queue[str]) -> None:
         self.logger = common.get_logger("scanner")
         self.queue = q
 
