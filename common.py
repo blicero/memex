@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-08 21:02:42 krylon>
+# Time-stamp: <2023-10-10 19:25:15 krylon>
 #
 # /data/code/python/memex/common.py
 # created on 28. 09. 2023
@@ -81,10 +81,10 @@ class Path:
         return os.path.join(self.__base, f"{APP_NAME.lower()}.log")
 
 
-path: Path = Path(os.path.expanduser(f"~/.{APP_NAME}.d"))
+path: Path = Path(os.path.expanduser(f"~/.{APP_NAME.lower()}.d"))
 
 _lock: Final[Lock] = Lock()  # pylint: disable-msg=C0103
-_cache: Final[dict[str,logging.Logger]] = {}  # pylint: disable-msg=C0103
+_cache: Final[dict[str, logging.Logger]] = {}  # pylint: disable-msg=C0103
 
 
 def set_basedir(folder: str) -> None:
@@ -95,6 +95,7 @@ def set_basedir(folder: str) -> None:
 
 def init_app() -> None:
     """Initialize the application environment"""
+    print(f"Create base directory {path.base()}")
     if not os.path.isdir(path.base()):
         os.mkdir(path.base())
 

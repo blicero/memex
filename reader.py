@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-08 21:18:34 krylon>
+# Time-stamp: <2023-10-10 22:03:39 krylon>
 #
 # /data/code/python/memex/reader.py
 # created on 04. 10. 2023
@@ -61,18 +61,30 @@ class Reader:
         self.file_queue = queue
         self.workers = []
 
+        self.log.debug("Starting %d worker threads", worker_cnt)
+
         for i in range(worker_cnt):
             worker: Thread = Thread(target=self.__worker, args=(i, ))
             worker.daemon = True
+            worker.start()
             self.workers.append(worker)
 
     def __worker(self, worker_id: int) -> None:
         """Process image files as they arrive at the queue."""
+        self.log.debug("Worker %02d starting up", worker_id)
         while True:
-            path: str = self.file_queue.get()
-            content: str = self.read_image(path)
-            self.log.debug("""Worker%02d got text from %s:
-            %s""", worker_id, path, content)
+            try:
+                path: str = self.file_queue.get()
+                self.log.debug("Worker %02d: Got one file from queue: %s",
+                               worker_id,
+                               path)
+                content: str = self.read_image(path)
+                self.log.debug("""Worker%02d got text from %s:
+                %s""", worker_id, path, content)
+            except Exception as e:  # pylint: disable-msg=W0718,C0103
+                self.log.error("Failed to process image %s: %s",
+                               path,
+                               e)
 
     def read_image(self, path: str) -> str:
         """Extract text from an image file and return it as a string."""

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-07 22:51:00 krylon>
+# Time-stamp: <2023-10-10 19:03:38 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -127,6 +127,7 @@ class Database:  # pylint: disable-msg=R0903
     def __init__(self, path: str) -> None:
         self.path = path
         self.log = common.get_logger("database")
+        self.log.debug("Open database at %s", path)
         with open_lock:
             exist: bool = krylib.fexist(path)
             self.db = sqlite3.connect(path)  # pylint: disable-msg=C0103

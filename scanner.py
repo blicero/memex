@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-08 21:03:47 krylon>
+# Time-stamp: <2023-10-10 21:52:56 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -68,14 +68,17 @@ class Scanner:
         """Walks a single directory tree"""
         for folder, _, files in os.walk(path):
             for f in files:
-                if _picPat.search(f):
-                    self.queue.put(os.path.join(folder, f))
+                full_path: str = os.path.join(folder, f)
+                if _picPat.search(full_path):
+                    # self.logger.debug("Enqueue %s", full_path)
+                    self.queue.put(full_path)
 
     def scan(self, folders: List[str]) -> None:
         """Walks a list of folders in parallel.
         Returns when all folders have been processed."""
-        workers: List[Thread] = []
+        workers: list[Thread] = []
         for f in folders:
+            self.logger.debug("Start worker for %s", f)
             w: Thread = Thread(target=self.walk_dir, args=(f, ))
             w.start()
             workers.append(w)

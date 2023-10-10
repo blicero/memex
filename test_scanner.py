@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-06 21:55:29 krylon>
+# Time-stamp: <2023-10-10 21:50:54 krylon>
 #
 # /data/code/python/memex/test/test_scanner.py
 # created on 30. 09. 2023
@@ -66,7 +66,7 @@ fqueue: Queue = Queue()
 myScanner: scanner.Scanner
 
 
-def generate_directory_tree(root: str, depth: int = 3, num: int = 10) -> int:
+def generate_directory_tree(root: str, depth: int = 2, num: int = 5) -> int:
     """Generate  directory tree to test our scanner.
     Return the number of files created"""
     if depth < 1:
