@@ -1,5 +1,5 @@
 # Binaries for programs and plugins
-# Time-stamp: <2023-09-28 20:07:19 krylon>
+# Time-stamp: <2023-10-10 22:06:19 krylon>
 *.exe
 *.dll
 *.so
@@ -23,3 +23,5 @@ bak.*
 __pycache__
 
 *.pyc
+
+*.bin
