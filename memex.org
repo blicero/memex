@@ -1,5 +1,5 @@
 # -*- mode: org; fill-column: 78; -*-
-# Time-stamp: <2023-10-10 22:05:39 krylon>
+# Time-stamp: <2023-10-11 19:16:57 krylon>
 #
 #+TAGS: go(g) internals(i) ui(u) bug(b) feature(f)
 #+TAGS: database(d) design(e), meditation(m)
@@ -14,19 +14,20 @@ index.
 
 * Clock
   #+BEGIN: clocktable :scope file :maxlevel 202 :emphasize t
-  #+CAPTION: Clock summary at [2023-10-10 Di 22:05]
-  | Headline             | Time      |         |
-  |----------------------+-----------+---------|
-  | *Total time*         | *1d 7:01* |         |
-  |----------------------+-----------+---------|
-  | *Components [0/0]*   | *1d 7:01* |         |
-  | \_  /Common [0/0]/   |           | /2:29/  |
-  | \_  /Scanner [0/0]/  |           | /6:03/  |
-  | \_  /Reader [0/0]/   |           | /4:17/  |
-  | \_  /Database [0/0]/ |           | /13:56/ |
-  | \_  /CLI [0/0]/      |           | /4:16/  |
+  #+CAPTION: Clock summary at [2023-10-11 Mi 19:16]
+  | Headline             | Time      |         |      |
+  |----------------------+-----------+---------+------|
+  | *Total time*         | *1d 8:27* |         |      |
+  |----------------------+-----------+---------+------|
+  | *Components [0/1]*   | *1d 8:27* |         |      |
+  | \_  /Common [0/0]/   |           | /2:29/  |      |
+  | \_  /Scanner [0/0]/  |           | /6:03/  |      |
+  | \_  /Reader [0/1]/   |           | /5:43/  |      |
+  | \_    tesserocr      |           |         | 1:24 |
+  | \_  /Database [0/0]/ |           | /13:56/ |      |
+  | \_  /CLI [0/0]/      |           | /4:16/  |      |
   #+END:
-* Components [0/0]
+* Components [0/1]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :VISIBILITY: children
@@ -41,11 +42,23 @@ index.
    CLOCK: [2023-10-04 Mi 17:53]--[2023-10-04 Mi 19:53] =>  2:00
    CLOCK: [2023-09-30 Sa 18:15]--[2023-09-30 Sa 22:18] =>  4:03
    :END:
-** Reader [0/0]
+** Reader [0/1]
    :LOGBOOK:
+   CLOCK: [2023-10-11 Mi 17:50]--[2023-10-11 Mi 17:52] =>  0:02
    CLOCK: [2023-10-04 Mi 20:19]--[2023-10-05 Do 00:36] =>  4:17
    :END:
    Okay, the API offered by pytesseract is fortunately stupid easy.
+   ... However, it turns out pytesseract is not available on Debian, and I do
+   not want to deal with virtualenv just yet (it's definitely on my todo list,
+   though).
+   Furthermore, on my desktop machine, I get errors when running several
+   worker threads. I assume this is because tesseract uses the nVidia GPU, and
+   I furthermore assume that having several processes do this at once does not
+   work super well.
+*** TODO tesserocr
+    :LOGBOOK:
+    CLOCK: [2023-10-11 Mi 17:52]--[2023-10-11 Mi 19:16] =>  1:24
+    :END:
 ** Database [0/0]
    :LOGBOOK:
    CLOCK: [2023-10-08 So 21:05]--[2023-10-08 So 21:58] =>  0:53
