@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-10 19:03:38 krylon>
+# Time-stamp: <2023-10-11 18:14:17 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -96,7 +96,8 @@ class Query(Enum):
 
 DB_QUERIES: Final[dict[Query, str]] = {
     Query.FILE_ADD:
-    "INSERT INTO image (path, content, timestamp) VALUES (?, ?, ?) RETURNING id",
+    """INSERT INTO image (path, content, timestamp)
+    VALUES (?, ?, ?) RETURNING id""",
     Query.FILE_DELETE:
     "DELETE FROM image WHERE id = ?",
     Query.FILE_UPDATE:

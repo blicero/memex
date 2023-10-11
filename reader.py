@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-10 22:03:39 krylon>
+# Time-stamp: <2023-10-11 18:10:09 krylon>
 #
 # /data/code/python/memex/reader.py
 # created on 04. 10. 2023
@@ -41,8 +41,9 @@ from queue import Queue
 from threading import Thread
 from typing import List
 
-import pytesseract  # type: ignore
-from PIL import Image  # type: ignore
+# import pytesseract  # type: ignore
+# from PIL import Image  # type: ignore
+import tesserocr  # type: ignore
 
 from memex import common
 
@@ -75,12 +76,13 @@ class Reader:
         while True:
             try:
                 path: str = self.file_queue.get()
-                self.log.debug("Worker %02d: Got one file from queue: %s",
-                               worker_id,
-                               path)
+                # self.log.debug("Worker %02d: Got one file from queue: %s",
+                #                worker_id,
+                #                path)
                 content: str = self.read_image(path)
-                self.log.debug("""Worker%02d got text from %s:
-                %s""", worker_id, path, content)
+                if content != "":
+                    self.log.debug("""Worker%02d got text from %s:
+                    %s""", worker_id, path, content)
             except Exception as e:  # pylint: disable-msg=W0718,C0103
                 self.log.error("Failed to process image %s: %s",
                                path,
@@ -90,7 +92,8 @@ class Reader:
         """Extract text from an image file and return it as a string."""
         self.log.debug("Process image %s", path)
         try:
-            return pytesseract.image_to_string(Image.open(path))
+            # return pytesseract.image_to_string(Image.open(path))
+            return tesserocr.file_to_text(path)  # pylint: disable-msg=I1101
         except Exception as ex:
             self.log.error("Error processing %s: %s", path, ex)
             raise
