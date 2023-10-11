@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-10 22:03:13 krylon>
+# Time-stamp: <2023-10-11 16:54:13 krylon>
 #
 # /data/code/python/memex/cli.py
 # created on 10. 10. 2023
@@ -34,6 +34,7 @@ memex.cli
 """
 
 import argparse
+import os
 import time
 from queue import Queue
 
@@ -52,6 +53,10 @@ def main() -> None:
                       metavar="folders",
                       nargs="*",
                       help="Folders to scan")
+    argp.add_argument("-w", "--workers",
+                      type=int,
+                      default=os.cpu_count(),
+                      help="Number of worker threads to use")
     argp.add_argument("-q", "--query",
                       help="Query string")
     argp.add_argument("-v", "--verbose",
@@ -73,7 +78,7 @@ def main() -> None:
         # pylint: disable-msg=C0103
         q: Queue[str] = Queue()
         sc = scanner.Scanner(q)
-        rdr = reader.Reader(q)  # noqa
+        rdr = reader.Reader(q, args.workers)
         sc.scan(args.folders)
         print("Done.")
         while rdr.file_queue.qsize() > 0:
