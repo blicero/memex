@@ -1,5 +1,5 @@
 # Binaries for programs and plugins
-# Time-stamp: <2023-10-10 22:06:19 krylon>
+# Time-stamp: <2023-10-11 17:49:10 krylon>
 *.exe
 *.dll
 *.so
@@ -24,4 +24,6 @@ __pycache__
 
 *.pyc
 
+# Files left by tesseract
 *.bin
+*.dat
