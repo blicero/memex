@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-11 18:10:09 krylon>
+# Time-stamp: <2023-10-12 19:19:40 krylon>
 #
 # /data/code/python/memex/reader.py
 # created on 04. 10. 2023
@@ -37,6 +37,7 @@ Attempts to extract text from image files.
 
 import logging
 import os
+from datetime import datetime
 from queue import Queue
 from threading import Thread
 from typing import List
@@ -45,7 +46,7 @@ from typing import List
 # from PIL import Image  # type: ignore
 import tesserocr  # type: ignore
 
-from memex import common
+from memex import common, database, image
 
 
 # pylint: disable-msg=R0903
@@ -56,13 +57,19 @@ class Reader:
     log: logging.Logger
     workers: List[Thread]
     file_queue: Queue[str]
+    result_queue: Queue[image.Image]
 
     def __init__(self, queue: Queue[str], worker_cnt=os.cpu_count()) -> None:
         self.log = common.get_logger("reader")
         self.file_queue = queue
         self.workers = []
+        self.result_queue = Queue()
 
         self.log.debug("Starting %d worker threads", worker_cnt)
+
+        res_handler = Thread(target=self.__result_handler)
+        res_handler.daemon = True
+        res_handler.start()
 
         for i in range(worker_cnt):
             worker: Thread = Thread(target=self.__worker, args=(i, ))
@@ -83,10 +90,27 @@ class Reader:
                 if content != "":
                     self.log.debug("""Worker%02d got text from %s:
                     %s""", worker_id, path, content)
+                    img = image.Image(0, path, content, datetime.now())
+                    self.result_queue.put(img)
             except Exception as e:  # pylint: disable-msg=W0718,C0103
                 self.log.error("Failed to process image %s: %s",
                                path,
                                e)
+
+    def __result_handler(self) -> None:
+        """Store processed images into the database."""
+        self.log.debug("Result handler starting up.")
+        db: database.Database \
+            = database.Database(common.path.db())  # pylint: disable-msg=C0103
+        while True:
+            with db:
+                try:
+                    img: image.Image = self.result_queue.get()
+                    db.file_add(img.path, img.content)
+                except Exception as ex:  # pylint: disable-msg=W0718
+                    self.log.error("Error processing image %s: %s",
+                                   img.path,
+                                   ex)
 
     def read_image(self, path: str) -> str:
         """Extract text from an image file and return it as a string."""
