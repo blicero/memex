@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-08 21:57:18 krylon>
+# Time-stamp: <2023-10-14 18:28:43 krylon>
 #
 # /data/code/python/memex/test_database.py
 # created on 06. 10. 2023
@@ -95,6 +95,15 @@ class DatabaseTest(unittest.TestCase):
             self.assertGreater(len(results), 0)
         except Exception as ex:  # pylint: disable-msg=W0718
             self.fail(f"Failed searching for image: {ex}")
+
+    def test_04_image_timestamp(self) -> None:
+        """Test getting image's timestamp."""
+        path: Final[str] = "/tmp/img001.jpg"
+        db = self.__class__.db()
+        stamp = db.file_timestamp(path)
+        self.assertIsNotNone(stamp)
+        stamp = db.file_timestamp(path + ".png")
+        self.assertIsNone(stamp)
 
 # Local Variables: #
 # python-indent: 4 #

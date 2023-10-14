@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-12 14:54:18 krylon>
+# Time-stamp: <2023-10-14 19:22:34 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -38,7 +38,7 @@ import sqlite3
 import threading
 from datetime import datetime
 from enum import Enum, auto
-from typing import Final, List
+from typing import Final, List, Optional
 
 import krylib
 
@@ -92,6 +92,7 @@ class Query(Enum):
     FILE_UPDATE = auto()
     FILE_DELETE = auto()
     FILE_SEARCH = auto()
+    FILE_STAMP = auto()
 
 
 DB_QUERIES: Final[dict[Query, str]] = {
@@ -117,6 +118,7 @@ FROM img_index i
 INNER JOIN image f ON i.path = f.path
 WHERE img_index MATCH ?
     """,
+    Query.FILE_STAMP: "SELECT id, timestamp FROM image WHERE path = ?",
 }
 
 
@@ -182,6 +184,16 @@ class Database:  # pylint: disable-msg=R0903
                               datetime.fromtimestamp(row[3]))
             results.append(img)
         return results
+
+    def file_timestamp(self, path: str) -> Optional[datetime]:
+        """Return the given images timestamp"""
+        # self.log.debug("Searching for timestamp of image %s", path)
+        cur: sqlite3.Cursor = self.db.cursor()
+        cur.execute(DB_QUERIES[Query.FILE_STAMP], (path, ))
+        row = cur.fetchone()
+        if row is not None:
+            return datetime.fromtimestamp(row[0])
+        return None
 
 # Local Variables: #
 # python-indent: 4 #
