@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-14 19:21:19 krylon>
+# Time-stamp: <2023-10-14 19:46:58 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -78,7 +78,7 @@ class Scanner:
                     stamp_cur = datetime.fromtimestamp(mtime)
                     stamp_db = db.file_timestamp(full_path)
 
-                    if stamp_db is None or stamp_db < stamp_cur:
+                    if (stamp_db is None) or (stamp_cur > stamp_db):
                         self.queue.put(full_path)
 
     def scan(self, folders: List[str]) -> None:
