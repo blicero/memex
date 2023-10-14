@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-10 21:52:56 krylon>
+# Time-stamp: <2023-10-14 19:21:19 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -36,15 +36,16 @@ Scans directory trees for image files.
 """
 
 import logging
-import re
 import os
 import os.path
-
+import re
+import stat
+from datetime import datetime
 from queue import Queue
 from threading import Thread
 from typing import Final, List
 
-from memex import common
+from memex import common, database
 
 # pylint: disable-msg=C0103
 
@@ -66,12 +67,19 @@ class Scanner:
 
     def walk_dir(self, path: str) -> None:
         """Walks a single directory tree"""
+        db: database.Database = database.Database(common.path.db())
         for folder, _, files in os.walk(path):
             for f in files:
                 full_path: str = os.path.join(folder, f)
                 if _picPat.search(full_path):
                     # self.logger.debug("Enqueue %s", full_path)
-                    self.queue.put(full_path)
+                    info = os.stat(full_path)
+                    mtime = info[stat.ST_MTIME]
+                    stamp_cur = datetime.fromtimestamp(mtime)
+                    stamp_db = db.file_timestamp(full_path)
+
+                    if stamp_db is None or stamp_db < stamp_cur:
+                        self.queue.put(full_path)
 
     def scan(self, folders: List[str]) -> None:
         """Walks a list of folders in parallel.
