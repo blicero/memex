@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-14 19:22:34 krylon>
+# Time-stamp: <2023-10-14 20:00:13 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -160,21 +160,21 @@ class Database:  # pylint: disable-msg=R0903
         return self.db.__exit__(ex_type, ex_val, traceback)
 
     # pylint: disable-msg=C0301
-    def file_add(self, path: str, content: str, timestamp: datetime = datetime.now()) -> image.Image:  # noqa
+    def file_add(self, path: str, content: str, timestamp: datetime = datetime.min) -> image.Image:  # noqa
         """Add the file to the database."""
-        self.log.debug("Add image %s", path)
+        # self.log.debug("Add image %s", path)
         with self.db:
             cur: sqlite3.Cursor = self.db.cursor()
             cur.execute(DB_QUERIES[Query.FILE_ADD],
                         (path,
                          content,
-                         timestamp.timestamp()))
+                         int(timestamp.timestamp())))
             row = cur.fetchone()
             return image.Image(row[0], path, content, timestamp)
 
     def file_search(self, query: str) -> list[image.Image]:
         """Search for files matching the given query"""
-        self.log.debug("Searching for images matching '%s'", query)
+        # self.log.debug("Searching for images matching '%s'", query)
         results: list[image.Image] = []
         cur: sqlite3.Cursor = self.db.cursor()
         for row in cur.execute(DB_QUERIES[Query.FILE_SEARCH], (query, )):
