@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-14 19:46:58 krylon>
+# Time-stamp: <2023-10-14 20:51:05 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -43,7 +43,7 @@ import stat
 from datetime import datetime
 from queue import Queue
 from threading import Thread
-from typing import Final, List
+from typing import Final, List, Optional
 
 from memex import common, database
 
@@ -51,6 +51,17 @@ from memex import common, database
 
 _picPat: Final[re.Pattern[str]] = \
         re.compile("[.](?:jpe?g|png|webp|avif|gif)$", re.I)
+
+
+def file_mtime(path: str) -> Optional[datetime]:
+    """Return the file's mtime"""
+    try:
+        info = os.stat(path)
+        mtime = info[stat.ST_MTIME]
+        stamp = datetime.fromtimestamp(mtime)
+        return stamp
+    except FileNotFoundError:
+        return None
 
 
 class Scanner:
@@ -72,13 +83,9 @@ class Scanner:
             for f in files:
                 full_path: str = os.path.join(folder, f)
                 if _picPat.search(full_path):
-                    # self.logger.debug("Enqueue %s", full_path)
-                    info = os.stat(full_path)
-                    mtime = info[stat.ST_MTIME]
-                    stamp_cur = datetime.fromtimestamp(mtime)
-                    stamp_db = db.file_timestamp(full_path)
-
-                    if (stamp_db is None) or (stamp_cur > stamp_db):
+                    scur = file_mtime(full_path)
+                    sdb = db.file_timestamp(full_path)
+                    if (sdb is None) or (scur > sdb):  # type: ignore
                         self.queue.put(full_path)
 
     def scan(self, folders: List[str]) -> None:
