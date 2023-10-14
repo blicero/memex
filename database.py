@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-14 20:00:13 krylon>
+# Time-stamp: <2023-10-14 21:45:56 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -118,7 +118,7 @@ FROM img_index i
 INNER JOIN image f ON i.path = f.path
 WHERE img_index MATCH ?
     """,
-    Query.FILE_STAMP: "SELECT id, timestamp FROM image WHERE path = ?",
+    Query.FILE_STAMP: "SELECT timestamp FROM image WHERE path = ?",
 }
 
 
@@ -188,12 +188,15 @@ class Database:  # pylint: disable-msg=R0903
     def file_timestamp(self, path: str) -> Optional[datetime]:
         """Return the given images timestamp"""
         # self.log.debug("Searching for timestamp of image %s", path)
-        cur: sqlite3.Cursor = self.db.cursor()
-        cur.execute(DB_QUERIES[Query.FILE_STAMP], (path, ))
-        row = cur.fetchone()
-        if row is not None:
-            return datetime.fromtimestamp(row[0])
-        return None
+        try:
+            cur: sqlite3.Cursor = self.db.cursor()
+            cur.execute(DB_QUERIES[Query.FILE_STAMP], (path, ))
+            row = cur.fetchone()
+            if row is not None:
+                return datetime.fromtimestamp(row[0])
+            return None
+        except UnicodeEncodeError:
+            return None
 
 # Local Variables: #
 # python-indent: 4 #
