@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-16 22:18:47 krylon>
+# Time-stamp: <2023-10-17 14:49:08 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -50,12 +50,15 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
     def __init__(self) -> None:
         # Create widgets first
         self.mw = gtk.Window()
-        self.mbox = gtk.Box(gtk.Orientation.HORIZONTAL)
+        self.mbox = gtk.Box(orientation=gtk.Orientation.VERTICAL)
         self.menubar = gtk.MenuBar()
         self.file_menu_item = gtk.MenuItem.new_with_mnemonic("_File")
         self.file_menu = gtk.Menu()
-        self.button_box = gtk.Box(gtk.Orientation.VERTICAL)
-        self.search_box = gtk.Box(gtk.Orientation.VERTICAL)
+        self.button_box = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
+        self.search_box = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
+        self.search_entry = gtk.Entry()
+        self.search_button = gtk.Button.new_with_mnemonic("_Search")
+        self.clear_button = gtk.Button.new_with_mnemonic("_x")
         self.result_view = gtk.ScrolledWindow()
         self.img_box = gtk.FlowBox()
 
@@ -75,17 +78,23 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
 
         # Build window
         self.mw.add(self.mbox)
-        self.mbox.add(self.menubar)
+        self.mbox.pack_start(self.menubar, False, True, 0)
+
+        self.mbox.pack_start(self.button_box, False, True, 0)
+        self.mbox.pack_start(self.search_box, False, True, 0)
+        self.mbox.pack_start(self.result_view, True, True, 0)
+        self.result_view.add(self.img_box)
+
         self.menubar.append(self.file_menu_item)
         self.file_menu_item.set_submenu(self.file_menu)
         self.file_menu.append(self.scan_item)
         self.file_menu.append(self.quit_item)
 
-        self.mbox.add(self.button_box)
-        self.mbox.add(self.result_view)
-        self.result_view.add(self.img_box)
+        self.button_box.pack_start(self.scan_button, False, True, 0)
 
-        self.button_box.add(self.scan_button)
+        self.search_box.pack_start(self.search_entry, True, True, 0)
+        self.search_box.pack_start(self.search_button, False, True, 0)
+        self.search_box.pack_start(self.clear_button, False, True, 0)
 
         # Set up signal handlers
         self.mw.connect("destroy", gtk.main_quit)
