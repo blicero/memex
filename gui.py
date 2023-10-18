@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-18 21:01:41 krylon>
+# Time-stamp: <2023-10-18 21:05:52 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -192,6 +192,10 @@ def main() -> None:
     mw = MemexUI()
     mw.log.debug("Let's go")
     gtk.main()
+
+
+if __name__ == "__main__":
+    main()
 
 # Local Variables: #
 # python-indent: 4 #
