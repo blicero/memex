@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-17 14:49:08 krylon>
+# Time-stamp: <2023-10-18 21:01:41 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -33,21 +33,32 @@ memex.gui
 (c) 2023 Benjamin Walkenhorst
 """
 
+from queue import Queue
+from threading import Lock, Thread
 from typing import Final
 
 # pylint: disable-msg=C0413,C0103
 import gi  # type: ignore
 
-from memex import common
+from memex import common, database, image, reader, scanner
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk as gtk  # noqa: E402 # pylint: disable-msg=C0411
+from gi.repository import GdkPixbuf as gpb  # noqa: E402,E501 # pylint: disable-msg=C0411
 
 
 class MemexUI:  # pylint: disable-msg=R0902,R0903
     """MemexUI is the visual frontend of the application."""
 
-    def __init__(self) -> None:
+    def __init__(self) -> None:  # pylint: disable-msg=R0915
+        self.log = common.get_logger("GUI")
+        self.queue: Queue[str] = Queue()
+        self.scanner = scanner.Scanner(self.queue)
+        self.reader = reader.Reader(self.queue)
+        self.lock = Lock()
+        self.scan_active = False
+        self.db = database.Database(common.path.db())
+
         # Create widgets first
         self.mw = gtk.Window()
         self.mbox = gtk.Box(orientation=gtk.Orientation.VERTICAL)
@@ -61,6 +72,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.clear_button = gtk.Button.new_with_mnemonic("_x")
         self.result_view = gtk.ScrolledWindow()
         self.img_box = gtk.FlowBox()
+        self.images: list[gtk.Image] = []
 
         self.scan_button = gtk.Button.new_with_mnemonic("_Scan")
 
@@ -99,9 +111,87 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         # Set up signal handlers
         self.mw.connect("destroy", gtk.main_quit)
         self.quit_item.connect("activate", gtk.main_quit)
+        self.scan_button.connect("clicked", self.scan_folder)
+        self.scan_item.connect("activate", self.scan_folder)
+        self.search_button.connect("clicked", self.search)
+        self.search_entry.connect("activate", self.search)
+        self.clear_button.connect("clicked", self.__clear_search)
+        self.quit_item.connect("activate", gtk.main_quit)
 
         self.mw.show_all()
 
+    def scan_folder(self, *args) -> None:  # pylint: disable-msg=W0613
+        """Scan a folder. Duh."""
+        dlg = gtk.FileChooserDialog(
+            title="Pick a folder...",
+            parent=self.mw,
+            action=gtk.FileChooserAction.SELECT_FOLDER)
+        dlg.add_buttons(
+            gtk.STOCK_CANCEL,
+            gtk.ResponseType.CANCEL,
+            gtk.STOCK_OPEN,
+            gtk.ResponseType.OK)
+
+        try:
+            res = dlg.run()
+            if res != gtk.ResponseType.OK:
+                self.log.debug("Response from dialog: %s", res)
+                return
+
+            path = dlg.get_filename()
+            self.log.info("Scan folder %s", path)
+            thr = Thread(target=self.__scan_worker, args=(path, ))
+            thr.start()
+        finally:
+            dlg.destroy()
+
+    def search(self, *args) -> None:  # pylint: disable-msg=W0613
+        """Search for images."""
+        for i in self.images:
+            self.img_box.remove(i)
+            i.destroy()
+        self.images.clear()
+
+        query: str = self.search_entry.get_text()
+        self.log.debug("Search for images containing \"%s\"", query)
+        results: list[image.Image] = self.db.file_search(query)
+        for img_file in results:
+            pb = gpb.Pixbuf.new_from_file_at_scale(filename=img_file.path,
+                                                   width=256,
+                                                   height=256,
+                                                   preserve_aspect_ratio=True)
+            img = gtk.Image.new_from_pixbuf(pb)
+            self.img_box.add(img)
+            self.images.append(img)
+            img.show_all()
+
+    def __clear_search(self, *args) -> None:  # pylint: disable-msg=W0613
+        """Clear the search thingy"""
+        for i in self.images:
+            self.img_box.remove(i)
+            i.destroy()
+        self.images.clear()
+        self.search_entry.set_text("")
+
+    def __scan_worker(self, path: str) -> None:
+        """Perform the actual scanning of folders in the background."""
+        with self.lock:
+            self.scan_button.set_sensitive(False)
+            self.scan_active = True
+
+        try:
+            self.scanner.scan([path])
+        finally:
+            with self.lock:
+                self.scan_button.set_sensitive(True)
+                self.scan_active = False
+
+
+def main() -> None:
+    """Display the GUI and run the gtk mainloop"""
+    mw = MemexUI()
+    mw.log.debug("Let's go")
+    gtk.main()
 
 # Local Variables: #
 # python-indent: 4 #
