@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-06 19:39:30 krylon>
+# Time-stamp: <2023-10-19 22:25:43 krylon>
 #
 # /data/code/python/memex/__init__.py
 # created on 28. 09. 2023
@@ -31,6 +31,25 @@
 memex.__init__
 
 (c) 2023 Benjamin Walkenhorst
+
+Safety pig:
+
+                        _
+ _._ _..._ .-',     _.._(`))
+'-. `     '  /-._.-'    ',/
+   )         \            '.
+  / _    _    |             \
+ |  a    a    /              |
+ \   .-.                     ;
+  '-('' ).-'       ,'       ;
+     '-;           |      .'
+        \           \    /
+        | 7 .__ _.-  \   \
+        | |  |  ``/  /`  /
+       /,_|  |   /,_/   /
+          /,_/      '`-'
+
+
 """
 
 __all__ = ["common", "scanner", "reader", "image", "database"]
