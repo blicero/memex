@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-18 21:05:52 krylon>
+# Time-stamp: <2023-10-19 18:14:03 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
