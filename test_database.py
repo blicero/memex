@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-19 18:16:34 krylon>
+# Time-stamp: <2023-10-19 20:16:02 krylon>
 #
 # /data/code/python/memex/test_database.py
 # created on 06. 10. 2023
@@ -59,6 +59,10 @@ class DatabaseTest(unittest.TestCase):
         common.set_basedir(TEST_DIR)
 
     @classmethod
+    def tearDownClass(cls) -> None:
+        os.system(f'rm -rf "{TEST_DIR}"')
+
+    @classmethod
     def db(cls, db: Optional[database.Database] = None) -> database.Database:
         """Set or return the database connection."""
         if db is not None:
@@ -81,7 +85,7 @@ class DatabaseTest(unittest.TestCase):
         db: database.Database = DatabaseTest.db()
         try:
             with db:
-                img = db.file_add(path, content, timestamp)
+                img = db.file_add(path, content, "", timestamp)
                 self.assertGreater(img.dbid, 0)
         except Exception as ex:  # pylint: disable-msg=W0718
             self.fail(f"Failed adding image: {ex}")

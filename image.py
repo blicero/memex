@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-07 17:12:45 krylon>
+# Time-stamp: <2023-10-19 19:03:55 krylon>
 #
 # /data/code/python/memex/image.py
 # created on 05. 10. 2023
@@ -42,6 +42,7 @@ class Image(NamedTuple):  # pylint: disable-msg=R0903
     dbid: int
     path: str
     content: str
+    comment: str
     timestamp: datetime
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-14 22:03:03 krylon>
+# Time-stamp: <2023-10-19 19:17:08 krylon>
 #
 # /data/code/python/memex/reader.py
 # created on 04. 10. 2023
@@ -87,7 +87,7 @@ class Reader:
                 #                worker_id,
                 #                path)
                 content: str = self.read_image(path)
-                img = image.Image(0, path, content, datetime.now())
+                img = image.Image(0, path, content, "", datetime.now())
                 self.result_queue.put(img)
             except Exception as e:  # pylint: disable-msg=W0718,C0103
                 self.log.error("Failed to process image %s: %s",
@@ -103,7 +103,7 @@ class Reader:
             with db:
                 try:
                     img: image.Image = self.result_queue.get()
-                    db.file_add(img.path, img.content, img.timestamp)
+                    db.file_add(img.path, img.content, img.comment, img.timestamp)  # noqa: E501
                 except Exception as ex:  # pylint: disable-msg=W0718
                     self.log.error("Error processing image %s: %s",
                                    img.path,

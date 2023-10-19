@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-14 21:45:56 krylon>
+# Time-stamp: <2023-10-19 19:13:40 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -48,20 +48,21 @@ INIT_QUERIES: Final[List[str]] = [
     """CREATE TABLE image (
         id INTEGER PRIMARY KEY,
         path TEXT UNIQUE NOT NULL,
-        content TEXT,
+        content TEXT NOT NULL DEFAULT '',
+        comment TEXT NOT NULL DEFAULT '',
         timestamp INTEGER NOT NULL)
     """,
 
     "CREATE UNIQUE INDEX img_path_idx ON image (path)",
     "CREATE INDEX img_time_idx ON image (timestamp)",
-    "CREATE INDEX img_content_idx ON image (content)",
-    "CREATE VIRTUAL TABLE img_index USING fts4(path, content)",
+    "CREATE VIRTUAL TABLE img_index USING fts4(path, content, comment)",
 
     """
 CREATE TRIGGER tr_fts_img_add
 AFTER INSERT ON image
 BEGIN
-    INSERT INTO img_index (path, content) VALUES (new.path, new.content);
+    INSERT INTO img_index (path, content, comment)
+    VALUES (new.path, new.content, new.comment);
 END;
 """,
 
@@ -78,7 +79,8 @@ CREATE TRIGGER tr_fts_img_up
 AFTER UPDATE ON image
 BEGIN
     DELETE FROM img_index WHERE path = old.path;
-    INSERT INTO img_index (path, content) VALUES (new.path, new.content);
+    INSERT INTO img_index (path, content, comment)
+    VALUES (new.path, new.content, new.comment);
 END;
 """,
 ]
@@ -97,22 +99,24 @@ class Query(Enum):
 
 DB_QUERIES: Final[dict[Query, str]] = {
     Query.FILE_ADD:
-    """INSERT INTO image (path, content, timestamp)
-    VALUES (?, ?, ?)
+    """INSERT INTO image (path, content, comment, timestamp)
+    VALUES (?, ?, ?, ?)
     ON CONFLICT(path) DO
         UPDATE SET content=excluded.content,
+                   comment=excluded.comment,
                    timestamp=excluded.timestamp
     RETURNING id""",
     Query.FILE_DELETE:
     "DELETE FROM image WHERE id = ?",
     Query.FILE_UPDATE:
-    "UPDATE image SET content = ?, timestamp = ? WHERE id = ?",
+    "UPDATE image SET content = ?, comment = ?, timestamp = ? WHERE id = ?",
     Query.FILE_SEARCH:
     """
 SELECT
     f.id,
     f.path,
     f.content,
+    COALESCE(f.comment, '') AS comment,
     f.timestamp
 FROM img_index i
 INNER JOIN image f ON i.path = f.path
@@ -160,7 +164,7 @@ class Database:  # pylint: disable-msg=R0903
         return self.db.__exit__(ex_type, ex_val, traceback)
 
     # pylint: disable-msg=C0301
-    def file_add(self, path: str, content: str, timestamp: datetime = datetime.min) -> image.Image:  # noqa
+    def file_add(self, path: str, content: str, comment: str = "", timestamp: datetime = datetime.min) -> image.Image:  # noqa
         """Add the file to the database."""
         # self.log.debug("Add image %s", path)
         with self.db:
@@ -168,9 +172,10 @@ class Database:  # pylint: disable-msg=R0903
             cur.execute(DB_QUERIES[Query.FILE_ADD],
                         (path,
                          content,
+                         comment,
                          int(timestamp.timestamp())))
             row = cur.fetchone()
-            return image.Image(row[0], path, content, timestamp)
+            return image.Image(row[0], path, content, comment, timestamp)
 
     def file_search(self, query: str) -> list[image.Image]:
         """Search for files matching the given query"""
@@ -181,7 +186,8 @@ class Database:  # pylint: disable-msg=R0903
             img = image.Image(row[0],
                               row[1],
                               row[2],
-                              datetime.fromtimestamp(row[3]))
+                              row[3],
+                              datetime.fromtimestamp(row[4]))
             results.append(img)
         return results
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-19 18:14:03 krylon>
+# Time-stamp: <2023-10-19 20:38:25 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -44,7 +44,9 @@ from memex import common, database, image, reader, scanner
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk as gtk  # noqa: E402 # pylint: disable-msg=C0411
+from gi.repository import Gdk as gdk  # noqa: E402 # pylint: disable-msg=C0411
 from gi.repository import GdkPixbuf as gpb  # noqa: E402,E501 # pylint: disable-msg=C0411
+from gi.repository import GLib as glib  # noqa: E402,E501 # pylint: disable-msg=C0411
 
 
 class MemexUI:  # pylint: disable-msg=R0902,R0903
@@ -118,6 +120,9 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.clear_button.connect("clicked", self.__clear_search)
         self.quit_item.connect("activate", gtk.main_quit)
 
+        # self.img_box.connect("button-press-event", self.__handle_img_click)
+        self.img_box.connect("child-activated", self.__handle_img_click)
+
         self.mw.show_all()
 
     def scan_folder(self, *args) -> None:  # pylint: disable-msg=W0613
@@ -156,14 +161,20 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.log.debug("Search for images containing \"%s\"", query)
         results: list[image.Image] = self.db.file_search(query)
         for img_file in results:
-            pb = gpb.Pixbuf.new_from_file_at_scale(filename=img_file.path,
-                                                   width=256,
-                                                   height=256,
-                                                   preserve_aspect_ratio=True)
-            img = gtk.Image.new_from_pixbuf(pb)
-            self.img_box.add(img)
-            self.images.append(img)
-            img.show_all()
+            try:
+                pb = gpb.Pixbuf.new_from_file_at_scale(filename=img_file.path,
+                                                       width=256,
+                                                       height=256,
+                                                       preserve_aspect_ratio=True)  # noqa: E501
+                img = gtk.Image.new_from_pixbuf(pb)
+                self.img_box.add(img)
+                self.images.append(img)
+                img.show_all()
+                # img.connect("button-press-event", self.handle_img_click)
+            except glib.GError as ex:
+                self.log.debug("Error processing %s: %s",
+                               img_file.path,
+                               ex)
 
     def __clear_search(self, *args) -> None:  # pylint: disable-msg=W0613
         """Clear the search thingy"""
@@ -185,6 +196,13 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
             with self.lock:
                 self.scan_button.set_sensitive(True)
                 self.scan_active = False
+
+    def __handle_img_click(self, img: gtk.Image, evt: gdk.EventButton) -> None:
+        """Handle a click into the image box"""
+        if evt.button != 3:
+            self.log.debug("Button %d was pressed, we do not care", evt.button)
+
+        self.log.debug("You clicked on Image %s", img)
 
 
 def main() -> None:
