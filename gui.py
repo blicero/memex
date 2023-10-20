@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-20 13:38:22 krylon>
+# Time-stamp: <2023-10-20 19:47:17 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -33,6 +33,7 @@ memex.gui
 (c) 2023 Benjamin Walkenhorst
 """
 
+import os
 from queue import Queue
 from threading import Lock, Thread
 from typing import Final
@@ -92,6 +93,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.img_box.set_selection_mode(gtk.SelectionMode.NONE)
 
         # Build window
+        # pylint: disable-msg=E1101
         self.mw.add(self.mbox)
         self.mbox.pack_start(self.menubar, False, True, 0)
 
@@ -139,6 +141,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
             gtk.ResponseType.OK)
 
         try:
+            # pylint: disable-msg=E1101
             res = dlg.run()
             if res != gtk.ResponseType.OK:
                 self.log.debug("Response from dialog: %s", res)
@@ -168,7 +171,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
                                                        height=192,
                                                        preserve_aspect_ratio=True)  # noqa: E501
                 img = gtk.Image.new_from_pixbuf(pb)
-                self.img_box.add(img)
+                self.img_box.add(img)  # pylint: disable-msg=E1101
                 self.images.append((img_file, img))
                 img.show_all()
             except glib.GError as ex:
@@ -205,10 +208,58 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         menu: gtk.Menu = gtk.Menu.new()
         display_item: gtk.MenuItem = gtk.MenuItem.new_with_mnemonic("_Display")
         edit_item: gtk.MenuItem = gtk.MenuItem.new_with_mnemonic("_Edit")
+        display_item.connect("activate", self.__handle_img_display, img)
+        edit_item.connect("activate", self.__handle_img_edit, img)
         menu.append(display_item)
         menu.append(edit_item)
         menu.show_all()
         menu.popup_at_pointer(None)
+
+    def __handle_img_display(self, _: gtk.MenuItem, img: image.Image) -> None:  # noqa: E501
+        """Display the given image."""
+        os.system(f"/usr/bin/xdg-open \"{img.path}\"")
+
+    def __handle_img_edit(self, _: gtk.MenuItem, img: image.Image) -> None:
+        """Display a dialog for editing the given image."""
+        dlg: gtk.Dialog = gtk.Dialog(
+            title="Edit comment",
+            parent=self.mw,
+        )
+        dlg.add_buttons(
+            gtk.STOCK_CANCEL,
+            gtk.ResponseType.CANCEL,
+            gtk.STOCK_OK,
+            gtk.ResponseType.OK,
+        )
+        txt: gtk.TextView = gtk.TextView.new()
+        txt.editable = True
+        txt.get_buffer().set_text(img.comment)
+        # pylint: disable-msg=E1101
+        lbl: gtk.Label = gtk.Label.new(img.path)
+        dlg.get_content_area().add(lbl)
+        dlg.get_content_area().add(txt)
+        dlg.show_all()
+
+        try:
+            response = dlg.run()
+            if response != gtk.ResponseType.OK:
+                return
+
+            buf = txt.get_buffer()
+            start: gtk.TextIter = buf.get_start_iter()
+            end: gtk.TextIter = buf.get_end_iter()
+            comment: str = buf.get_text(start, end, True)
+            if comment != img.comment:
+                # Update database
+                with self.db:
+                    self.db.file_add(
+                        img.path,
+                        img.content,
+                        comment,
+                        img.timestamp,
+                    )
+        finally:
+            dlg.destroy()
 
 
 def main() -> None:
