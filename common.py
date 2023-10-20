@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-10 19:25:15 krylon>
+# Time-stamp: <2023-10-20 19:54:26 krylon>
 #
 # /data/code/python/memex/common.py
 # created on 28. 09. 2023
@@ -53,7 +53,7 @@ from typing import Final
 # LOG_PATH: str = os.path.join(BASE_DIR, "memex.log")
 
 APP_NAME: Final[str] = "Memex"
-APP_VERSION: Final[str] = "0.0.1"
+APP_VERSION: Final[str] = "0.1.0"
 DEBUG: Final[bool] = True
 
 
