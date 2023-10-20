@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-19 22:25:43 krylon>
+# Time-stamp: <2023-10-20 12:41:52 krylon>
 #
 # /data/code/python/memex/__init__.py
 # created on 28. 09. 2023
@@ -27,7 +27,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-"""
+r"""
 memex.__init__
 
 (c) 2023 Benjamin Walkenhorst
