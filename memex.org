@@ -1,5 +1,5 @@
 # -*- mode: org; fill-column: 78; -*-
-# Time-stamp: <2023-10-20 13:41:54 krylon>
+# Time-stamp: <2023-10-20 19:49:26 krylon>
 #
 #+TAGS: go(g) internals(i) ui(u) bug(b) feature(f)
 #+TAGS: database(d) design(e), meditation(m)
@@ -14,12 +14,12 @@ index.
 
 * Clock
   #+BEGIN: clocktable :scope file :maxlevel 202 :emphasize t
-  #+CAPTION: Clock summary at [2023-10-20 Fr 13:41]
+  #+CAPTION: Clock summary at [2023-10-20 Fr 19:49]
   | Headline                 | Time      |         |      |
   |--------------------------+-----------+---------+------|
-  | *Total time*             | *2d 0:51* |         |      |
+  | *Total time*             | *2d 2:35* |         |      |
   |--------------------------+-----------+---------+------|
-  | *Components [2/4]*       | *2d 0:51* |         |      |
+  | *Components [2/4]*       | *2d 2:35* |         |      |
   | \_  /Common [0/0]/       |           | /2:29/  |      |
   | \_  /Scanner [1/1]/      |           | /6:43/  |      |
   | \_    Observe timestamps |           |         | 0:40 |
@@ -27,8 +27,8 @@ index.
   | \_    tesserocr          |           |         | 1:24 |
   | \_  /Database [0/0]/     |           | /19:30/ |      |
   | \_  /CLI [0/0]/          |           | /4:16/  |      |
-  | \_  /Gui [0/2]/          |           | /10:10/ |      |
-  | \_    Context clues      |           |         | 1:28 |
+  | \_  /Gui [0/2]/          |           | /11:54/ |      |
+  | \_    Context clues      |           |         | 3:12 |
   #+END:
 * Components [2/4]
   :PROPERTIES:
@@ -103,6 +103,7 @@ index.
 *** TODO Make me pretty
 *** TODO Context clues
     :LOGBOOK:
+    CLOCK: [2023-10-20 Fr 18:05]--[2023-10-20 Fr 19:49] =>  1:44
     CLOCK: [2023-10-20 Fr 12:13]--[2023-10-20 Fr 13:41] =>  1:28
     :END:
 * Bugs [0/0]
