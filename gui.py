@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-19 20:38:25 krylon>
+# Time-stamp: <2023-10-20 13:38:22 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -43,10 +43,11 @@ import gi  # type: ignore
 from memex import common, database, image, reader, scanner
 
 gi.require_version("Gtk", "3.0")
+from gi.repository import \
+    GdkPixbuf as gpb  # noqa: E402,E501 # pylint: disable-msg=C0411
+from gi.repository import \
+    GLib as glib  # noqa: E402,E501 # pylint: disable-msg=C0411
 from gi.repository import Gtk as gtk  # noqa: E402 # pylint: disable-msg=C0411
-from gi.repository import Gdk as gdk  # noqa: E402 # pylint: disable-msg=C0411
-from gi.repository import GdkPixbuf as gpb  # noqa: E402,E501 # pylint: disable-msg=C0411
-from gi.repository import GLib as glib  # noqa: E402,E501 # pylint: disable-msg=C0411
 
 
 class MemexUI:  # pylint: disable-msg=R0902,R0903
@@ -74,7 +75,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.clear_button = gtk.Button.new_with_mnemonic("_x")
         self.result_view = gtk.ScrolledWindow()
         self.img_box = gtk.FlowBox()
-        self.images: list[gtk.Image] = []
+        self.images: list[tuple[image.Image, gtk.Image]] = []
 
         self.scan_button = gtk.Button.new_with_mnemonic("_Scan")
 
@@ -153,8 +154,8 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
     def search(self, *args) -> None:  # pylint: disable-msg=W0613
         """Search for images."""
         for i in self.images:
-            self.img_box.remove(i)
-            i.destroy()
+            self.img_box.remove(i[1])
+            i[1].destroy()
         self.images.clear()
 
         query: str = self.search_entry.get_text()
@@ -163,14 +164,13 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         for img_file in results:
             try:
                 pb = gpb.Pixbuf.new_from_file_at_scale(filename=img_file.path,
-                                                       width=256,
-                                                       height=256,
+                                                       width=192,
+                                                       height=192,
                                                        preserve_aspect_ratio=True)  # noqa: E501
                 img = gtk.Image.new_from_pixbuf(pb)
                 self.img_box.add(img)
-                self.images.append(img)
+                self.images.append((img_file, img))
                 img.show_all()
-                # img.connect("button-press-event", self.handle_img_click)
             except glib.GError as ex:
                 self.log.debug("Error processing %s: %s",
                                img_file.path,
@@ -179,8 +179,8 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
     def __clear_search(self, *args) -> None:  # pylint: disable-msg=W0613
         """Clear the search thingy"""
         for i in self.images:
-            self.img_box.remove(i)
-            i.destroy()
+            self.img_box.remove(i[1])
+            i[1].destroy()
         self.images.clear()
         self.search_entry.set_text("")
 
@@ -197,12 +197,18 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
                 self.scan_button.set_sensitive(True)
                 self.scan_active = False
 
-    def __handle_img_click(self, img: gtk.Image, evt: gdk.EventButton) -> None:
+    def __handle_img_click(self, box: gtk.FlowBox, child: gtk.FlowBoxChild) -> None:  # noqa: E501 # pylint: disable-msg=W0613
         """Handle a click into the image box"""
-        if evt.button != 3:
-            self.log.debug("Button %d was pressed, we do not care", evt.button)
-
-        self.log.debug("You clicked on Image %s", img)
+        idx: int = child.get_index()
+        img: image.Image = self.images[idx][0]
+        self.log.debug("You clicked on %s", img.path)
+        menu: gtk.Menu = gtk.Menu.new()
+        display_item: gtk.MenuItem = gtk.MenuItem.new_with_mnemonic("_Display")
+        edit_item: gtk.MenuItem = gtk.MenuItem.new_with_mnemonic("_Edit")
+        menu.append(display_item)
+        menu.append(edit_item)
+        menu.show_all()
+        menu.popup_at_pointer(None)
 
 
 def main() -> None:
