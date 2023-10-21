@@ -1,5 +1,5 @@
 # -*- mode: org; fill-column: 78; -*-
-# Time-stamp: <2023-10-20 19:49:26 krylon>
+# Time-stamp: <2023-10-21 00:55:00 krylon>
 #
 #+TAGS: go(g) internals(i) ui(u) bug(b) feature(f)
 #+TAGS: database(d) design(e), meditation(m)
@@ -14,12 +14,12 @@ index.
 
 * Clock
   #+BEGIN: clocktable :scope file :maxlevel 202 :emphasize t
-  #+CAPTION: Clock summary at [2023-10-20 Fr 19:49]
+  #+CAPTION: Clock summary at [2023-10-21 Sa 00:54]
   | Headline                 | Time      |         |      |
   |--------------------------+-----------+---------+------|
-  | *Total time*             | *2d 2:35* |         |      |
+  | *Total time*             | *2d 7:14* |         |      |
   |--------------------------+-----------+---------+------|
-  | *Components [2/4]*       | *2d 2:35* |         |      |
+  | *Components [3/4]*       | *2d 7:14* |         |      |
   | \_  /Common [0/0]/       |           | /2:29/  |      |
   | \_  /Scanner [1/1]/      |           | /6:43/  |      |
   | \_    Observe timestamps |           |         | 0:40 |
@@ -27,10 +27,11 @@ index.
   | \_    tesserocr          |           |         | 1:24 |
   | \_  /Database [0/0]/     |           | /19:30/ |      |
   | \_  /CLI [0/0]/          |           | /4:16/  |      |
-  | \_  /Gui [0/2]/          |           | /11:54/ |      |
+  | \_  /Gui [1/2]/          |           | /16:33/ |      |
+  | \_    Make me pretty     |           |         | 4:39 |
   | \_    Context clues      |           |         | 3:12 |
   #+END:
-* Components [2/4]
+* Components [3/4]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :VISIBILITY: children
@@ -88,7 +89,7 @@ index.
    :LOGBOOK:
    CLOCK: [2023-10-10 Di 17:49]--[2023-10-10 Di 22:05] =>  4:16
    :END:
-** Gui [0/2]
+** Gui [1/2]
    :LOGBOOK:
    CLOCK: [2023-10-19 Do 18:31]--[2023-10-19 Do 19:30] =>  0:59
    CLOCK: [2023-10-18 Mi 17:40]--[2023-10-18 Mi 21:03] =>  3:23
@@ -101,7 +102,11 @@ index.
    I wonder if I could add some more functionality. Context menu, something
    like that?
 *** TODO Make me pretty
-*** TODO Context clues
+    :LOGBOOK:
+    CLOCK: [2023-10-20 Fr 20:15]--[2023-10-21 Sa 00:54] =>  4:39
+    :END:
+*** DONE Context clues
+    CLOSED: [2023-10-20 Fr 20:14]
     :LOGBOOK:
     CLOCK: [2023-10-20 Fr 18:05]--[2023-10-20 Fr 19:49] =>  1:44
     CLOCK: [2023-10-20 Fr 12:13]--[2023-10-20 Fr 13:41] =>  1:28
