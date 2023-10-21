@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-20 19:54:26 krylon>
+# Time-stamp: <2023-10-20 20:48:00 krylon>
 #
 # /data/code/python/memex/common.py
 # created on 28. 09. 2023
@@ -71,6 +71,10 @@ class Path:
         if folder != "":
             self.__base = folder
         return self.__base
+
+    def window(self) -> str:
+        """Return the path of the window state file"""
+        return os.path.join(self.__base, f"{APP_NAME.lower()}.win")
 
     def db(self) -> str:  # pylint: disable-msg=C0103
         """Return the path to the database"""

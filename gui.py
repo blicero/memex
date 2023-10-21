@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-20 19:47:17 krylon>
+# Time-stamp: <2023-10-21 02:14:30 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -34,6 +34,7 @@ memex.gui
 """
 
 import os
+import re
 from queue import Queue
 from threading import Lock, Thread
 from typing import Final
@@ -49,6 +50,8 @@ from gi.repository import \
 from gi.repository import \
     GLib as glib  # noqa: E402,E501 # pylint: disable-msg=C0411
 from gi.repository import Gtk as gtk  # noqa: E402 # pylint: disable-msg=C0411
+
+state_pat: Final[re.Pattern] = re.compile(r"(\d+)x(\d+)@(\d+),(\d+)")
 
 
 class MemexUI:  # pylint: disable-msg=R0902,R0903
@@ -72,13 +75,13 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.button_box = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
         self.search_box = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
         self.search_entry = gtk.Entry()
-        self.search_button = gtk.Button.new_with_mnemonic("_Search")
-        self.clear_button = gtk.Button.new_with_mnemonic("_x")
+        self.search_button = gtk.Button.new_from_stock(gtk.STOCK_FIND)
+        self.clear_button = gtk.Button.new_from_stock(gtk.STOCK_CLEAR)
         self.result_view = gtk.ScrolledWindow()
         self.img_box = gtk.FlowBox()
         self.images: list[tuple[image.Image, gtk.Image]] = []
 
-        self.scan_button = gtk.Button.new_with_mnemonic("_Scan")
+        self.scan_button = gtk.Button.new_from_icon_name("folder", 5)
 
         self.scan_item = gtk.MenuItem.new_with_mnemonic("_Scan Folder")
         self.quit_item = gtk.MenuItem.new_with_mnemonic("_Quit")
@@ -122,11 +125,14 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.search_entry.connect("activate", self.search)
         self.clear_button.connect("clicked", self.__clear_search)
         self.quit_item.connect("activate", gtk.main_quit)
+        self.mw.connect("window-state-event", self.__save_pos)
 
         # self.img_box.connect("button-press-event", self.__handle_img_click)
         self.img_box.connect("child-activated", self.__handle_img_click)
 
         self.mw.show_all()
+        self.__restore_pos()
+        self.mw.set_focus(self.search_entry)
 
     def scan_folder(self, *args) -> None:  # pylint: disable-msg=W0613
         """Scan a folder. Duh."""
@@ -260,6 +266,31 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
                     )
         finally:
             dlg.destroy()
+
+    def __save_pos(self, *args) -> None:  # pylint: disable-msg=W0613
+        """Save the current size and position of the main window to a file"""
+        pos: tuple[int, int] = self.mw.get_position()  # pylint: disable-msg=E1101 # noqa: E501
+        size: tuple[int, int] = self.mw.get_size()
+        geom: Final[str] = f"{size[0]}x{size[1]}@{pos[0]},{pos[1]}"
+        self.log.debug("Save Window state: %s", geom)
+
+        with open(common.path.window(), "w", encoding="UTF-8") as fh:
+            fh.write(geom)
+
+    def __restore_pos(self) -> None:
+        """Restore the main window's size and position."""
+        wfile: Final[str] = common.path.window()
+        if not os.path.isfile(wfile):
+            return
+        with open(wfile, "r", encoding="UTF-8") as fh:
+            content = fh.read()
+            m = state_pat.match(content)
+            if isinstance(m, re.Match):
+                # pylint: disable-msg=E1101
+                size = [int(x) for x in m.group(1, 2)]
+                pos = [int(x) for x in m.group(3, 4)]
+                self.mw.move(pos[0], pos[1])
+                self.mw.resize(size[0], size[1])
 
 
 def main() -> None:
