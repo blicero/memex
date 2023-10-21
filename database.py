@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-19 19:13:40 krylon>
+# Time-stamp: <2023-10-21 02:20:12 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -82,6 +82,12 @@ BEGIN
     INSERT INTO img_index (path, content, comment)
     VALUES (new.path, new.content, new.comment);
 END;
+""",
+
+    """
+CREATE TABLE folder (id        INTEGER PRIMARY KEY,
+                     path      TEXT UNIQUE NOT NULL,
+                     timestamp INTEGER NOT NULL)
 """,
 ]
 
