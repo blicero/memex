@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-11 16:54:13 krylon>
+# Time-stamp: <2023-10-22 21:40:32 krylon>
 #
 # /data/code/python/memex/cli.py
 # created on 10. 10. 2023
@@ -79,7 +79,7 @@ def main() -> None:
         q: Queue[str] = Queue()
         sc = scanner.Scanner(q)
         rdr = reader.Reader(q, args.workers)
-        sc.scan(args.folders)
+        sc.scan(*args.folders)
         print("Done.")
         while rdr.file_queue.qsize() > 0:
             print(f"Waiting for {q.qsize()} files to be processed.")
