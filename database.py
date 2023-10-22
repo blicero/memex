@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-21 02:20:12 krylon>
+# Time-stamp: <2023-10-22 21:34:20 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -101,6 +101,8 @@ class Query(Enum):
     FILE_DELETE = auto()
     FILE_SEARCH = auto()
     FILE_STAMP = auto()
+    FOLDER_ADD = auto()
+    FOLDER_FETCH_ALL = auto()
 
 
 DB_QUERIES: Final[dict[Query, str]] = {
@@ -127,8 +129,17 @@ SELECT
 FROM img_index i
 INNER JOIN image f ON i.path = f.path
 WHERE img_index MATCH ?
+ORDER BY f.timestamp DESC
     """,
     Query.FILE_STAMP: "SELECT timestamp FROM image WHERE path = ?",
+    Query.FOLDER_ADD: """
+    INSERT INTO folder (path, timestamp)
+    VALUES             (   ?,         ?)
+    ON CONFLICT(path) DO
+        UPDATE SET timestamp=excluded.timestamp
+    RETURNING id
+    """,
+    Query.FOLDER_FETCH_ALL: "SELECT path FROM folder",
 }
 
 
@@ -148,6 +159,7 @@ class Database:  # pylint: disable-msg=R0903
         with open_lock:
             exist: bool = krylib.fexist(path)
             self.db = sqlite3.connect(path)  # pylint: disable-msg=C0103
+            self.db.isolation_level = None
 
             cur: sqlite3.Cursor = self.db.cursor()
             cur.execute("PRAGMA foreign_keys = true")
@@ -209,6 +221,22 @@ class Database:  # pylint: disable-msg=R0903
             return None
         except UnicodeEncodeError:
             return None
+
+    def folder_add(self, path) -> None:
+        """Add or update a folder"""
+        with self.db:
+            cur: sqlite3.Cursor = self.db.cursor()
+            cur.execute(DB_QUERIES[Query.FOLDER_ADD],
+                        (path, datetime.now().timestamp()))
+
+    def folder_get_all(self) -> list[str]:
+        """Load all scanned folders from database."""
+        cur: sqlite3.Cursor = self.db.cursor()
+        folders: list[str] = []
+        for row in cur.execute(DB_QUERIES[Query.FOLDER_FETCH_ALL]):
+            print(f"Got one folder: {row}")
+            folders.append(row[0])
+        return folders
 
 # Local Variables: #
 # python-indent: 4 #
