@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-21 02:14:30 krylon>
+# Time-stamp: <2023-10-22 20:42:58 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -75,13 +75,14 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.button_box = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
         self.search_box = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
         self.search_entry = gtk.Entry()
-        self.search_button = gtk.Button.new_from_stock(gtk.STOCK_FIND)
-        self.clear_button = gtk.Button.new_from_stock(gtk.STOCK_CLEAR)
+        self.search_button = gtk.Button.new_from_stock(gtk.STOCK_FIND)  # pylint: disable-msg=E1101 # noqa: E501
+        self.clear_button = gtk.Button.new_from_stock(gtk.STOCK_CLEAR)  # pylint: disable-msg=E1101 # noqa: E501
         self.result_view = gtk.ScrolledWindow()
         self.img_box = gtk.FlowBox()
         self.images: list[tuple[image.Image, gtk.Image]] = []
 
         self.scan_button = gtk.Button.new_from_icon_name("folder", 5)
+        self.refresh_button = gtk.Button.new_from_stock(gtk.STOCK_REFRESH)  # pylint: disable-msg=E1101 # noqa: E501
 
         self.scan_item = gtk.MenuItem.new_with_mnemonic("_Scan Folder")
         self.quit_item = gtk.MenuItem.new_with_mnemonic("_Quit")
@@ -111,6 +112,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.file_menu.append(self.quit_item)
 
         self.button_box.pack_start(self.scan_button, False, True, 0)
+        self.button_box.pack_start(self.refresh_button, False, True, 0)
 
         self.search_box.pack_start(self.search_entry, True, True, 0)
         self.search_box.pack_start(self.search_button, False, True, 0)
@@ -120,6 +122,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.mw.connect("destroy", gtk.main_quit)
         self.quit_item.connect("activate", gtk.main_quit)
         self.scan_button.connect("clicked", self.scan_folder)
+        self.refresh_button.connect("clicked", self.__refresh_all_folders)
         self.scan_item.connect("activate", self.scan_folder)
         self.search_button.connect("clicked", self.search)
         self.search_entry.connect("activate", self.search)
@@ -205,6 +208,15 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
             with self.lock:
                 self.scan_button.set_sensitive(True)
                 self.scan_active = False
+                self.db.folder_add(path)
+
+    def __refresh_all_folders(self, _) -> None:
+        """Initiate a scan of all folders previously scanned."""
+        folders: list[str] = []
+        with self.lock:
+            folders = self.db.folder_get_all()
+        self.log.debug("Refresh the following folders: %s", folders)
+        self.scanner.scan(*folders)
 
     def __handle_img_click(self, box: gtk.FlowBox, child: gtk.FlowBoxChild) -> None:  # noqa: E501 # pylint: disable-msg=W0613
         """Handle a click into the image box"""
