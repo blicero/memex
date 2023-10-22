@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-22 21:40:32 krylon>
+# Time-stamp: <2023-10-22 22:13:26 krylon>
 #
 # /data/code/python/memex/cli.py
 # created on 10. 10. 2023
@@ -76,7 +76,7 @@ def main() -> None:
 
     if args.action == "scan":
         # pylint: disable-msg=C0103
-        q: Queue[str] = Queue()
+        q: Queue[str] = Queue(os.cpu_count())
         sc = scanner.Scanner(q)
         rdr = reader.Reader(q, args.workers)
         sc.scan(*args.folders)
