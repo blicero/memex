@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-14 20:51:05 krylon>
+# Time-stamp: <2023-10-22 21:31:52 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -43,7 +43,7 @@ import stat
 from datetime import datetime
 from queue import Queue
 from threading import Thread
-from typing import Final, List, Optional
+from typing import Final, Optional
 
 from memex import common, database
 
@@ -79,20 +79,30 @@ class Scanner:
     def walk_dir(self, path: str) -> None:
         """Walks a single directory tree"""
         db: database.Database = database.Database(common.path.db())
-        for folder, _, files in os.walk(path):
-            for f in files:
-                full_path: str = os.path.join(folder, f)
-                if _picPat.search(full_path):
-                    scur = file_mtime(full_path)
-                    sdb = db.file_timestamp(full_path)
-                    if (sdb is None) or (scur > sdb):  # type: ignore
-                        self.queue.put(full_path)
+        try:
+            for folder, _, files in os.walk(path):
+                try:
+                    for f in files:
+                        full_path: str = os.path.join(folder, f)
+                        if _picPat.search(full_path):
+                            scur = file_mtime(full_path)
+                            sdb = db.file_timestamp(full_path)
+                            if (sdb is None) or (scur > sdb):  # type: ignore # noqa: E501
+                                self.queue.put(full_path)
+                except Exception as e:  # pylint: disable-msg=W0718
+                    self.logger.debug("Error scanning %s: %s",
+                                      folder,
+                                      e)
+                    continue
+        finally:
+            with db:
+                db.folder_add(folder)
 
-    def scan(self, folders: List[str]) -> None:
+    def scan(self, *args) -> None:
         """Walks a list of folders in parallel.
         Returns when all folders have been processed."""
         workers: list[Thread] = []
-        for f in folders:
+        for f in args:
             self.logger.debug("Start worker for %s", f)
             w: Thread = Thread(target=self.walk_dir, args=(f, ))
             w.start()
