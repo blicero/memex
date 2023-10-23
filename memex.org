@@ -1,5 +1,5 @@
 # -*- mode: org; fill-column: 78; -*-
-# Time-stamp: <2023-10-23 12:35:12 krylon>
+# Time-stamp: <2023-10-23 21:55:13 krylon>
 #
 #+TAGS: go(g) internals(i) ui(u) bug(b) feature(f)
 #+TAGS: database(d) design(e), meditation(m)
@@ -14,24 +14,25 @@ index.
 
 * Clock
   #+BEGIN: clocktable :scope file :maxlevel 202 :emphasize t
-  #+CAPTION: Clock summary at [2023-10-23 Mo 12:35]
+  #+CAPTION: Clock summary at [2023-10-23 Mo 21:54]
   | Headline                 | Time       |         |      |
   |--------------------------+------------+---------+------|
-  | *Total time*             | *2d 12:43* |         |      |
+  | *Total time*             | *2d 13:32* |         |      |
   |--------------------------+------------+---------+------|
-  | *Components [3/4]*       | *2d 12:43* |         |      |
+  | *Components [4/6]*       | *2d 13:32* |         |      |
   | \_  /Common [0/0]/       |            | /2:29/  |      |
-  | \_  /Scanner [1/1]/      |            | /6:43/  |      |
+  | \_  /Scanner [1/2]/      |            | /7:32/  |      |
+  | \_    Refresh            |            |         | 0:49 |
   | \_    Observe timestamps |            |         | 0:40 |
   | \_  /Reader [1/1]/       |            | /5:43/  |      |
   | \_    tesserocr          |            |         | 1:24 |
-  | \_  /Database [0/0]/     |            | /21:36/ |      |
+  | \_  /Database [1/1]/     |            | /21:36/ |      |
   | \_  /CLI [0/0]/          |            | /4:16/  |      |
   | \_  /Gui [1/2]/          |            | /19:56/ |      |
   | \_    Make me pretty     |            |         | 4:39 |
   | \_    Context clues      |            |         | 3:12 |
   #+END:
-* Components [3/4]
+* Components [4/6]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :VISIBILITY: children
@@ -41,11 +42,16 @@ index.
    CLOCK: [2023-10-07 Sa 16:48]--[2023-10-07 Sa 18:49] =>  2:01
    CLOCK: [2023-10-07 Sa 12:20]--[2023-10-07 Sa 12:48] =>  0:28
    :END:
-** Scanner [1/1]
+** Scanner [1/2]
    :LOGBOOK:
    CLOCK: [2023-10-04 Mi 17:53]--[2023-10-04 Mi 19:53] =>  2:00
    CLOCK: [2023-09-30 Sa 18:15]--[2023-09-30 Sa 22:18] =>  4:03
    :END:
+*** TODO Refresh
+    :LOGBOOK:
+    CLOCK: [2023-10-23 Mo 21:05]--[2023-10-23 Mo 21:54] =>  0:49
+    CLOCK: [2023-10-23 Mo 20:33]--[2023-10-23 Mo 20:33] =>  0:00
+    :END:
 *** DONE Observe timestamps
     CLOSED: [2023-10-14 Sa 23:59]
     :LOGBOOK:
@@ -73,7 +79,7 @@ index.
     :LOGBOOK:
     CLOCK: [2023-10-11 Mi 17:52]--[2023-10-11 Mi 19:16] =>  1:24
     :END:
-** Database [0/0]
+** Database [1/1]
    :LOGBOOK:
    CLOCK: [2023-10-23 Mo 11:37]--[2023-10-23 Mo 12:35] =>  0:58
    CLOCK: [2023-10-21 Sa 15:40]--[2023-10-21 Sa 16:48] =>  1:08
@@ -87,6 +93,8 @@ index.
    Coming back from years of golang, I am disappointed Python's dbapi won't
    let me explicitly prepare queries. In Go, I used to test my SQL queries for
    syntax errors this way, without actually touching the database.
+*** DONE Cleanup
+    CLOSED: [2023-10-23 Mo 21:04]
 ** CLI [0/0]
    :LOGBOOK:
    CLOCK: [2023-10-10 Di 17:49]--[2023-10-10 Di 22:05] =>  4:16
