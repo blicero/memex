@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-23 12:35:33 krylon>
+# Time-stamp: <2023-10-23 12:46:46 krylon>
 #
 # /data/code/python/memex/common.py
 # created on 28. 09. 2023
@@ -42,15 +42,6 @@ import os.path
 
 from threading import Lock
 from typing import Final
-
-# # Base path for application-specific files
-# BASE_DIR: str = os.path.expanduser("~/.memex.d")
-
-# # Path of the database
-# DB_PATH: str = os.path.join(BASE_DIR, "memex.db")
-
-# # Path of the log file
-# LOG_PATH: str = os.path.join(BASE_DIR, "memex.log")
 
 APP_NAME: Final[str] = "Memex"
 APP_VERSION: Final[str] = "0.1.2"
