@@ -1,5 +1,5 @@
 # -*- mode: org; fill-column: 78; -*-
-# Time-stamp: <2023-10-22 21:36:04 krylon>
+# Time-stamp: <2023-10-23 12:35:12 krylon>
 #
 #+TAGS: go(g) internals(i) ui(u) bug(b) feature(f)
 #+TAGS: database(d) design(e), meditation(m)
@@ -14,18 +14,18 @@ index.
 
 * Clock
   #+BEGIN: clocktable :scope file :maxlevel 202 :emphasize t
-  #+CAPTION: Clock summary at [2023-10-22 So 21:36]
+  #+CAPTION: Clock summary at [2023-10-23 Mo 12:35]
   | Headline                 | Time       |         |      |
   |--------------------------+------------+---------+------|
-  | *Total time*             | *2d 11:45* |         |      |
+  | *Total time*             | *2d 12:43* |         |      |
   |--------------------------+------------+---------+------|
-  | *Components [3/4]*       | *2d 11:45* |         |      |
+  | *Components [3/4]*       | *2d 12:43* |         |      |
   | \_  /Common [0/0]/       |            | /2:29/  |      |
   | \_  /Scanner [1/1]/      |            | /6:43/  |      |
   | \_    Observe timestamps |            |         | 0:40 |
   | \_  /Reader [1/1]/       |            | /5:43/  |      |
   | \_    tesserocr          |            |         | 1:24 |
-  | \_  /Database [0/0]/     |            | /20:38/ |      |
+  | \_  /Database [0/0]/     |            | /21:36/ |      |
   | \_  /CLI [0/0]/          |            | /4:16/  |      |
   | \_  /Gui [1/2]/          |            | /19:56/ |      |
   | \_    Make me pretty     |            |         | 4:39 |
@@ -75,6 +75,7 @@ index.
     :END:
 ** Database [0/0]
    :LOGBOOK:
+   CLOCK: [2023-10-23 Mo 11:37]--[2023-10-23 Mo 12:35] =>  0:58
    CLOCK: [2023-10-21 Sa 15:40]--[2023-10-21 Sa 16:48] =>  1:08
    CLOCK: [2023-10-14 Sa 14:15]--[2023-10-14 Sa 14:23] =>  0:08
    CLOCK: [2023-10-12 Do 14:50]--[2023-10-12 Do 20:16] =>  5:26
