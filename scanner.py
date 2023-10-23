@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-22 21:31:52 krylon>
+# Time-stamp: <2023-10-23 12:32:07 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -76,6 +76,7 @@ class Scanner:
         self.logger = common.get_logger("scanner")
         self.queue = q
 
+    # pylint: disable-msg=R1702
     def walk_dir(self, path: str) -> None:
         """Walks a single directory tree"""
         db: database.Database = database.Database(common.path.db())
@@ -96,7 +97,7 @@ class Scanner:
                     continue
         finally:
             with db:
-                db.folder_add(folder)
+                db.folder_add(path)
 
     def scan(self, *args) -> None:
         """Walks a list of folders in parallel.

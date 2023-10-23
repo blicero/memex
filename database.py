@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-22 21:34:20 krylon>
+# Time-stamp: <2023-10-23 12:33:38 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -234,7 +234,6 @@ class Database:  # pylint: disable-msg=R0903
         cur: sqlite3.Cursor = self.db.cursor()
         folders: list[str] = []
         for row in cur.execute(DB_QUERIES[Query.FOLDER_FETCH_ALL]):
-            print(f"Got one folder: {row}")
             folders.append(row[0])
         return folders
 

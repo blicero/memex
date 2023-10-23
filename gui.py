@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-22 22:13:43 krylon>
+# Time-stamp: <2023-10-23 12:30:28 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -59,7 +59,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
 
     def __init__(self) -> None:  # pylint: disable-msg=R0915
         self.log = common.get_logger("GUI")
-        self.queue: Queue[str] = Queue(os.cpu_count())
+        self.queue: Queue[str] = Queue(os.cpu_count())  # type: ignore
         self.scanner = scanner.Scanner(self.queue)
         self.reader = reader.Reader(self.queue)
         self.lock = Lock()
