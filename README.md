@@ -5,3 +5,5 @@ collection of images and stores them in a database for easy searching.
 
 It provides a simple command line interface and a graphical user
 interface built on Gtk3.
+
+For more details see [the Journal](memex.org)
