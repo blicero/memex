@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-23 12:30:28 krylon>
+# Time-stamp: <2023-10-23 20:40:50 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -212,6 +212,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
 
     def __refresh_all_folders(self, _) -> None:
         """Initiate a scan of all folders previously scanned."""
+        self.db.cleanup()
         folders: list[str] = []
         with self.lock:
             folders = self.db.folder_get_all()

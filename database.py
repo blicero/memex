@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-23 12:33:38 krylon>
+# Time-stamp: <2023-10-23 20:39:28 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -101,6 +101,7 @@ class Query(Enum):
     FILE_DELETE = auto()
     FILE_SEARCH = auto()
     FILE_STAMP = auto()
+    FILE_GET_ALL = auto()
     FOLDER_ADD = auto()
     FOLDER_FETCH_ALL = auto()
 
@@ -132,6 +133,7 @@ WHERE img_index MATCH ?
 ORDER BY f.timestamp DESC
     """,
     Query.FILE_STAMP: "SELECT timestamp FROM image WHERE path = ?",
+    Query.FILE_GET_ALL: "SELECT id, path, content, comment, timestamp FROM image",  # noqa: E501
     Query.FOLDER_ADD: """
     INSERT INTO folder (path, timestamp)
     VALUES             (   ?,         ?)
@@ -221,6 +223,15 @@ class Database:  # pylint: disable-msg=R0903
             return None
         except UnicodeEncodeError:
             return None
+
+    def cleanup(self) -> None:
+        """Remove non-existent files from the database"""
+        with self.db:
+            cur = self.db.cursor()
+            for row in cur.execute(DB_QUERIES[Query.FILE_GET_ALL]):
+                path: str = row[1]
+                if not krylib.fexist(path):
+                    self.db.execute(DB_QUERIES[Query.FILE_DELETE], (row[0], ))
 
     def folder_add(self, path) -> None:
         """Add or update a folder"""
