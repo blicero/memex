@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-19 20:16:02 krylon>
+# Time-stamp: <2023-10-23 12:32:42 krylon>
 #
 # /data/code/python/memex/test_database.py
 # created on 06. 10. 2023
@@ -63,6 +63,11 @@ class DatabaseTest(unittest.TestCase):
         os.system(f'rm -rf "{TEST_DIR}"')
 
     @classmethod
+    def folders(cls) -> list[str]:
+        """Return the list of folders for testing"""
+        return ["~/Pictures", "/data/Pictures", "/Users/abobo/Photos"]
+
+    @classmethod
     def db(cls, db: Optional[database.Database] = None) -> database.Database:
         """Set or return the database connection."""
         if db is not None:
@@ -108,6 +113,30 @@ class DatabaseTest(unittest.TestCase):
         self.assertIsNotNone(stamp)
         stamp = db.file_timestamp(path + ".png")
         self.assertIsNone(stamp)
+
+    def test_05_folder_add(self) -> None:
+        """Test adding folders to the database."""
+        db = self.__class__.db()
+        for f in self.__class__.folders():
+            try:
+                with db:
+                    db.folder_add(f)
+            except Exception as e:  # pylint: disable-msg=W0718
+                self.fail(f"Error adding folder {f} to database: {e}")
+
+    def test_06_folder_get_all(self) -> None:
+        """Test loading the folders from the database"""
+        db = self.__class__.db()
+        try:
+            folders1 = db.folder_get_all()
+            folders2 = self.__class__.folders()
+            self.assertIsNotNone(folders1)
+            self.assertEqual(len(folders1), len(folders2))
+            folders1.sort()
+            folders2.sort()
+            self.assertEqual(folders1, folders2)
+        except Exception as e:  # pylint: disable-msg=W0718
+            self.fail(f"Error getting all folders: {e}")
 
 # Local Variables: #
 # python-indent: 4 #
