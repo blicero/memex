@@ -1,5 +1,5 @@
 # -*- mode: org; fill-column: 78; -*-
-# Time-stamp: <2023-10-23 21:55:13 krylon>
+# Time-stamp: <2023-10-24 19:06:36 krylon>
 #
 #+TAGS: go(g) internals(i) ui(u) bug(b) feature(f)
 #+TAGS: database(d) design(e), meditation(m)
@@ -32,6 +32,17 @@ index.
   | \_    Make me pretty     |            |         | 4:39 |
   | \_    Context clues      |            |         | 3:12 |
   #+END:
+* Refactor [0/1]
+  :PROPERTIES:
+  :COOKIE_DATA: todo recursive
+  :VISIBILITY: children
+  :END:
+** TODO Merge Reader and Scanner
+   After thinking about it for a while, I'm starting to think putting the
+   Reader and Scanner into separate module might not have been the best
+   idea. The need to create a Queue and then pass it to both makes the whole
+   thing a little fragile for my taste.
+   Therefore, I should merge the two into a single module.
 * Components [4/6]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
