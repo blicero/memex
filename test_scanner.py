@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-10 21:50:54 krylon>
+# Time-stamp: <2023-10-29 16:59:55 krylon>
 #
 # /data/code/python/memex/test/test_scanner.py
 # created on 30. 09. 2023
@@ -86,9 +86,10 @@ def generate_directory_tree(root: str, depth: int = 2, num: int = 5) -> int:
                 fullpath: str = os.path.join(folder, filename)
                 with open(fullpath, "w"):  # pylint: disable-msg=W1514
                     num_files += 1
-    except:  # noqa: E722
+    except:  # noqa: E722,B001
+        pass
+    else:
         os.system(f'rm -rf "{root}"')
-        raise
 
     return num_files
 
