@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-23 12:32:42 krylon>
+# Time-stamp: <2024-01-15 20:44:06 krylon>
 #
 # /data/code/python/memex/test_database.py
 # created on 06. 10. 2023
@@ -40,12 +40,18 @@ import unittest
 from datetime import datetime
 from typing import Final, Optional
 
+from krylib import isdir
+
 from memex import common, database
 
-TMP_ROOT: Final[str] = "/data/ram"
+# TMP_ROOT: Final[str] = "/data/ram"
+TEST_ROOT: str = "/tmp/"
+
+if isdir("/data/ram"):
+    TEST_ROOT = "/data/ram"
 
 TEST_DIR: Final[str] = os.path.join(
-    TMP_ROOT,
+    TEST_ROOT,
     datetime.now().strftime("memex_test_database_%Y%m%d_%H%M%S"))
 
 

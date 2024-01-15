@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-29 16:59:55 krylon>
+# Time-stamp: <2024-01-15 20:43:12 krylon>
 #
 # /data/code/python/memex/test/test_scanner.py
 # created on 30. 09. 2023
@@ -41,6 +41,8 @@ import unittest
 from queue import Queue
 from typing import Final, List
 
+from krylib import isdir
+
 from memex import scanner
 
 SUFFICES: Final[List[str]] = [
@@ -60,7 +62,11 @@ SUFFICES: Final[List[str]] = [
     'el',
 ]
 
-TMP_FOLDER: Final[str] = '/data/ram'
+# TMP_FOLDER: Final[str] = '/data/ram'
+TEST_ROOT: str = "/tmp/"
+
+if isdir("/data/ram"):
+    TEST_ROOT = "/data/ram"
 
 fqueue: Queue = Queue()
 myScanner: scanner.Scanner
@@ -104,7 +110,7 @@ class ScannerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         folder: str = f'memex_test_scanner_{random.randint(0, 1<<32):08x}'
-        cls.root = os.path.join(TMP_FOLDER, folder)
+        cls.root = os.path.join(TEST_ROOT, folder)
         cls.fcnt = generate_directory_tree(cls.root)
 
     @classmethod
