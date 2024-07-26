@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-23 20:40:50 krylon>
+# Time-stamp: <2024-07-26 20:02:03 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -74,6 +74,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.file_menu = gtk.Menu()
         self.button_box = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
         self.search_box = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
+        self.path_entry = gtk.Entry()
         self.search_entry = gtk.Entry()
         self.search_button = gtk.Button.new_from_stock(gtk.STOCK_FIND)  # pylint: disable-msg=E1101 # noqa: E501
         self.clear_button = gtk.Button.new_from_stock(gtk.STOCK_CLEAR)  # pylint: disable-msg=E1101 # noqa: E501
@@ -91,6 +92,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         title: Final[str] = f"{common.APP_NAME} {common.APP_VERSION}"
         self.mw.set_title(title)
 
+        self.path_entry.editable = False
         self.result_view.set_policy(gtk.PolicyType.NEVER, gtk.PolicyType.AUTOMATIC)  # noqa: E501
         self.img_box.set_valign(gtk.Align.START)
         self.img_box.set_max_children_per_line(3)
@@ -102,6 +104,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.mbox.pack_start(self.menubar, False, True, 0)
 
         self.mbox.pack_start(self.button_box, False, True, 0)
+        self.mbox.pack_start(self.path_entry, False, True, 0)
         self.mbox.pack_start(self.search_box, False, True, 0)
         self.mbox.pack_start(self.result_view, True, True, 0)
         self.result_view.add(self.img_box)
@@ -224,6 +227,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         idx: int = child.get_index()
         img: image.Image = self.images[idx][0]
         self.log.debug("You clicked on %s", img.path)
+        self.path_entry.set_text(img.path)
         menu: gtk.Menu = gtk.Menu.new()
         display_item: gtk.MenuItem = gtk.MenuItem.new_with_mnemonic("_Display")
         edit_item: gtk.MenuItem = gtk.MenuItem.new_with_mnemonic("_Edit")
