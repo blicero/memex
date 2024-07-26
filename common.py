@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-23 12:46:46 krylon>
+# Time-stamp: <2024-07-26 20:04:30 krylon>
 #
 # /data/code/python/memex/common.py
 # created on 28. 09. 2023
@@ -44,7 +44,7 @@ from threading import Lock
 from typing import Final
 
 APP_NAME: Final[str] = "Memex"
-APP_VERSION: Final[str] = "0.1.2"
+APP_VERSION: Final[str] = "0.2.0"
 DEBUG: Final[bool] = True
 
 
