@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2024-07-26 20:02:03 krylon>
+# Time-stamp: <2024-08-01 18:38:05 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -45,8 +45,11 @@ import gi  # type: ignore
 from memex import common, database, image, reader, scanner
 
 gi.require_version("Gtk", "3.0")
+gi.require_version("Gdk", "3.0")
 from gi.repository import \
     GdkPixbuf as gpb  # noqa: E402,E501 # pylint: disable-msg=C0411
+from gi.repository import \
+    Gdk as gdk  # noqa: E402,E501 # pylint: disable-msg=C0411
 from gi.repository import \
     GLib as glib  # noqa: E402,E501 # pylint: disable-msg=C0411
 from gi.repository import Gtk as gtk  # noqa: E402 # pylint: disable-msg=C0411
@@ -230,10 +233,13 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
         self.path_entry.set_text(img.path)
         menu: gtk.Menu = gtk.Menu.new()
         display_item: gtk.MenuItem = gtk.MenuItem.new_with_mnemonic("_Display")
+        copy_item: gtk.MenuItem = gtk.MenuItem.new_with_mnemonic("_Copy")
         edit_item: gtk.MenuItem = gtk.MenuItem.new_with_mnemonic("_Edit")
         display_item.connect("activate", self.__handle_img_display, img)
+        copy_item.connect("activate", self.__handle_img_copy, img)
         edit_item.connect("activate", self.__handle_img_edit, img)
         menu.append(display_item)
+        menu.append(copy_item)
         menu.append(edit_item)
         menu.show_all()
         menu.popup_at_pointer(None)
@@ -241,6 +247,14 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
     def __handle_img_display(self, _: gtk.MenuItem, img: image.Image) -> None:  # noqa: E501
         """Display the given image."""
         os.system(f"/usr/bin/xdg-open \"{img.path}\"")
+
+    def __handle_img_copy(self, _: gtk.MenuItem, img: image.Image) -> None:
+        """Copy the given image to the clipboard"""
+        pixbuf = gpb.Pixbuf.new_from_file(img.path)
+        display = gdk.Display.get_default()
+        clipboard = gtk.Clipboard.get_default(display)
+        self.log.debug("Copy image %s to clipboard", img.path)
+        clipboard.set_image(pixbuf)
 
     def __handle_img_edit(self, _: gtk.MenuItem, img: image.Image) -> None:
         """Display a dialog for editing the given image."""
