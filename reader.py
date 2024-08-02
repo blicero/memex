@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-19 19:17:08 krylon>
+# Time-stamp: <2024-07-31 18:08:24 krylon>
 #
 # /data/code/python/memex/reader.py
 # created on 04. 10. 2023
@@ -40,7 +40,7 @@ import os
 from datetime import datetime
 from queue import Queue
 from threading import Thread
-from typing import List
+from typing import Final, List, Optional
 
 # import pytesseract  # type: ignore
 # from PIL import Image  # type: ignore
@@ -48,18 +48,22 @@ import tesserocr  # type: ignore
 
 from memex import common, database, image
 
+CPU_COUNT: Final[Optional[int]] = os.cpu_count()
+
 
 # pylint: disable-msg=R0903
 class Reader:
     """Reader extracts text from image files,
-    using the Tesseract OCR engine."""
+
+    using the Tesseract OCR engine.
+    """
 
     log: logging.Logger
     workers: List[Thread]
     file_queue: Queue[str]
     result_queue: Queue[image.Image]
 
-    def __init__(self, queue: Queue[str], worker_cnt=os.cpu_count()) -> None:
+    def __init__(self, queue: Queue[str], worker_cnt=CPU_COUNT) -> None:
         self.log = common.get_logger("reader")
         self.file_queue = queue
         self.workers = []
@@ -114,7 +118,7 @@ class Reader:
         self.log.debug("Process image %s", path)
         try:
             # return pytesseract.image_to_string(Image.open(path))
-            return tesserocr.file_to_text(path)  # pylint: disable-msg=I1101
+            return tesserocr.file_to_text(path)  # pylint: disable-msg=I1101,E1101
         except Exception as ex:
             self.log.error("Error processing %s: %s", path, ex)
             raise

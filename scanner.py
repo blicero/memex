@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-23 12:32:07 krylon>
+# Time-stamp: <2024-07-31 18:06:43 krylon>
 #
 # /data/code/python/memex/scanner.py
 # created on 29. 09. 2023
@@ -78,7 +78,7 @@ class Scanner:
 
     # pylint: disable-msg=R1702
     def walk_dir(self, path: str) -> None:
-        """Walks a single directory tree"""
+        """Walk a single directory tree"""
         db: database.Database = database.Database(common.path.db())
         try:
             for folder, _, files in os.walk(path):
@@ -100,8 +100,10 @@ class Scanner:
                 db.folder_add(path)
 
     def scan(self, *args) -> None:
-        """Walks a list of folders in parallel.
-        Returns when all folders have been processed."""
+        """Walk a list of folders in parallel.
+
+        Returns when all folders have been processed.
+        """
         workers: list[Thread] = []
         for f in args:
             self.logger.debug("Start worker for %s", f)

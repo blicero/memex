@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-19 19:03:55 krylon>
+# Time-stamp: <2024-07-31 18:03:45 krylon>
 #
 # /data/code/python/memex/image.py
 # created on 05. 10. 2023
@@ -39,6 +39,7 @@ from typing import NamedTuple
 
 class Image(NamedTuple):  # pylint: disable-msg=R0903
     """Represents one image file"""
+
     dbid: int
     path: str
     content: str

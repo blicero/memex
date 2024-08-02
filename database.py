@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-23 20:39:28 krylon>
+# Time-stamp: <2024-07-31 18:03:40 krylon>
 #
 # /data/code/python/memex/database.py
 # created on 05. 10. 2023
@@ -96,6 +96,7 @@ open_lock: threading.Lock = threading.Lock()
 
 class Query(Enum):
     """Query provides symbolic constants for database queries."""
+
     FILE_ADD = auto()
     FILE_UPDATE = auto()
     FILE_DELETE = auto()
@@ -146,9 +147,7 @@ ORDER BY f.timestamp DESC
 
 
 class Database:  # pylint: disable-msg=R0903
-    """Database wraps the database connection and associated state and
-    provides the operations the application needs to perform on persistent
-    data."""
+    """Database wraps the database connection."""
 
     log: logging.Logger
     path: Final[str]  # pylint: disable-msg=C0103

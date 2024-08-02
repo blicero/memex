@@ -58,7 +58,9 @@ class Path:
 
     def base(self, folder: str = "") -> str:
         """Return the base directory for application specific files.
-        If path is a non-empty string, set the base directory to its value."""
+
+        If path is a non-empty string, set the base directory to its value.
+        """
         if folder != "":
             self.__base = folder
         return self.__base

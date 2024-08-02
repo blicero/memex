@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2023-10-23 12:30:53 krylon>
+# Time-stamp: <2024-07-31 18:02:07 krylon>
 #
 # /data/code/python/memex/cli.py
 # created on 10. 10. 2023
@@ -42,8 +42,7 @@ from memex import common, database, reader, scanner
 
 
 def main() -> None:
-    """The entry point for the CLI version."""
-
+    """Run the the CLI version."""
     argp: argparse.ArgumentParser = argparse.ArgumentParser()
     argp.add_argument("-a", "--action",
                       choices=["scan", "search"],

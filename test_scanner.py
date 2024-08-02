@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2024-01-15 20:43:12 krylon>
+# Time-stamp: <2024-07-31 18:08:54 krylon>
 #
 # /data/code/python/memex/test/test_scanner.py
 # created on 30. 09. 2023
@@ -74,7 +74,9 @@ myScanner: scanner.Scanner
 
 def generate_directory_tree(root: str, depth: int = 2, num: int = 5) -> int:
     """Generate  directory tree to test our scanner.
-    Return the number of files created"""
+
+    Return the number of files created
+    """
     if depth < 1:
         return 0
 
@@ -92,7 +94,7 @@ def generate_directory_tree(root: str, depth: int = 2, num: int = 5) -> int:
                 fullpath: str = os.path.join(folder, filename)
                 with open(fullpath, "w"):  # pylint: disable-msg=W1514
                     num_files += 1
-    except:  # noqa: E722,B001
+    except:  # noqa: E722,B001 pylint: disable-msg=W0702
         pass
     else:
         os.system(f'rm -rf "{root}"')
@@ -109,12 +111,14 @@ class ScannerTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Prepare the test environment."""
         folder: str = f'memex_test_scanner_{random.randint(0, 1<<32):08x}'
         cls.root = os.path.join(TEST_ROOT, folder)
         cls.fcnt = generate_directory_tree(cls.root)
 
     @classmethod
     def tearDownClass(cls):
+        """Clean up the test environment."""
         os.system(f'rm -rf "{cls.root}"')
 
     def test_create(self) -> None:

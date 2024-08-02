@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2024-01-15 20:44:06 krylon>
+# Time-stamp: <2024-07-31 18:05:59 krylon>
 #
 # /data/code/python/memex/test_database.py
 # created on 06. 10. 2023
@@ -62,10 +62,12 @@ class DatabaseTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Prepare the test environment."""
         common.set_basedir(TEST_DIR)
 
     @classmethod
     def tearDownClass(cls) -> None:
+        """Clean up the test environment."""
         os.system(f'rm -rf "{TEST_DIR}"')
 
     @classmethod
