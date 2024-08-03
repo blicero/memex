@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Time-stamp: <2024-08-01 18:38:05 krylon>
+# Time-stamp: <2024-08-03 17:30:17 krylon>
 #
 # /data/code/python/memex/gui.py
 # created on 14. 10. 2023
@@ -201,6 +201,7 @@ class MemexUI:  # pylint: disable-msg=R0902,R0903
             i[1].destroy()
         self.images.clear()
         self.search_entry.set_text("")
+        self.path_entry.set_text("")
 
     def __scan_worker(self, path: str) -> None:
         """Perform the actual scanning of folders in the background."""
